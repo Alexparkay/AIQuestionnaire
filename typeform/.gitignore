@@ -9,7 +9,7 @@
 /coverage
 
 # production
-/build
+# /build  # Comment out or remove this line
 
 # misc
 .DS_Store
