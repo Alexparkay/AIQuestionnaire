@@ -177,7 +177,7 @@ const Form = () => {
     if (isSubmitted) {
       return (
         <div className="thank-you-message">
-          <h2>Thank you for completing the survey!</h2>
+          <h2>Thank you {name}, for completing the questionnaire!</h2>
           <p>Your responses have been submitted successfully.</p>
         </div>
       );
@@ -237,7 +237,7 @@ const Form = () => {
       <div className="email-container">
         <img src={TopLeftLogo} alt="AFS Logo" className="top-left-logo" />
         <div className="email-content">
-          <h2 className="question-text">Please enter your information to begin the survey</h2>
+          <h2 className="question-text">Please enter your information to begin the questionnaire</h2>
           <form onSubmit={handleUserInfoSubmit}>
             <input
               type="text"
@@ -256,7 +256,7 @@ const Form = () => {
               required
             />
             <button type="submit" className="email-submit-button">
-              Start Survey
+              Start Questionnaire
             </button>
           </form>
         </div>
@@ -267,20 +267,22 @@ const Form = () => {
   return (
     <div className="form-container">
       <img src={TopLeftLogo} alt="AFS Logo" className="top-left-logo" />
-      <div className="section-progress">
-        {questions.map((section, index) => (
-          <button
-            key={index}
-            onClick={() => {
-              setCurrentSection(index);
-              setCurrentQuestion(-1); // Set to -1 to show the title page when clicking on a section
-            }}
-            className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
-          >
-            {section.section}
-          </button>
-        ))}
-      </div>
+      {!isSubmitted && (
+        <div className="section-progress">
+          {questions.map((section, index) => (
+            <button
+              key={index}
+              onClick={() => {
+                setCurrentSection(index);
+                setCurrentQuestion(-1); // Set to -1 to show the title page when clicking on a section
+              }}
+              className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
+            >
+              {section.section}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="form-content">
         {renderContent()}
       </div>
