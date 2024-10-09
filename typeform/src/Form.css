@@ -1,0 +1,268 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  background-color: #006eb6;
+  color: #ffffff;
+  overflow: hidden;
+}
+
+.form-container, .email-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  padding: 5vh 5vw;
+  box-sizing: border-box;
+  justify-content: center; /* Center vertically */
+  align-items: center; /* Center horizontally */
+  position: relative; /* Added for absolute positioning of children */
+}
+
+.top-left-logo {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+}
+
+.section-progress {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 80px; /* Increased to create more space below the logo */
+  margin-bottom: 30px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 20px 15px; /* Increased padding to make it thicker */
+}
+
+.section-progress-item {
+  flex: 1;
+  padding: 12px 8px; /* Increased padding */
+  text-align: center;
+  font-size: 16px;
+  border-radius: 16px;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  color: #ffffff;
+  opacity: 0.7;
+}
+
+.section-progress-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  opacity: 1;
+  font-weight: bold;
+}
+
+.form-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Changed from flex-start to center */
+  align-items: center; /* Added to center horizontally */
+  padding-top: 0; /* Removed top padding */
+  padding-bottom: 80px; /* Keep bottom padding for navigation buttons */
+}
+
+.question-text {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #ffffff;
+  line-height: 1.3;
+  text-align: center;
+  max-width: 80%; /* Added to limit width for better readability */
+}
+
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2vh;
+  width: 100%; /* Added to ensure full width */
+  max-width: 500px; /* Added to limit width on larger screens */
+}
+
+.option-button {
+  font-size: 18px;
+  padding: 2vh 3vw;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+}
+
+.option-button:hover, .option-button.selected {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: #ffffff;
+}
+
+.text-input, .email-input {
+  width: 100%;
+  padding: 2vh 3vw;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  box-sizing: border-box;
+  margin-bottom: 2vh;
+}
+
+.text-input::placeholder, .email-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.navigation-buttons {
+  position: absolute;
+  bottom: 30px;
+  left: 5vw;
+  right: 5vw;
+  display: flex;
+  justify-content: space-between;
+}
+
+.nav-button {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  padding: 2vh;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.3);
+  transform: scale(1.05);
+}
+
+.nav-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.email-submit-button {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.email-submit-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.section-title {
+  text-align: center;
+  cursor: pointer;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.section-title h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+.tap-to-continue {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.5); /* Greyed out text */
+  margin-top: 20px;
+}
+
+.start-section-button {
+  font-size: 18px;
+  padding: 12px 24px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.start-section-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (min-width: 768px) {
+  .form-container, .email-container {
+    max-width: 560px;
+    margin: 0 auto;
+  }
+
+  .section-progress-item {
+    font-size: 18px;
+  }
+
+  .question-text {
+    font-size: 32px;
+  }
+
+  .form-content {
+    padding-top: 0; /* Ensure no top padding on larger screens */
+  }
+}
+
+.question-number {
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.email-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  padding: 5vh 5vw;
+  box-sizing: border-box;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.email-content {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center; /* Center text alignment */
+}
+
+.email-content .question-text {
+  text-align: center;
+  margin-bottom: 30px;
+  width: 100%; /* Ensure full width */
+  max-width: 100%; /* Override any previous max-width */
+}
+
+.thank-you-message {
+  text-align: center;
+}
+
+.thank-you-message h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+.thank-you-message p {
+  font-size: 18px;
+}
