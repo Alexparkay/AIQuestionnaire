@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
+import ReactConfetti from 'react-confetti';
 import './Form.css';
 import TopLeftLogo from './Top_left_logo.svg';
 
@@ -87,6 +88,14 @@ const Form = () => {
   const [answers, setAnswers] = useState({});
   const [showSurvey, setShowSurvey] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showAudioOptions, setShowAudioOptions] = useState(false);
+  const [audioDuration, setAudioDuration] = useState('');
+  const [audioLanguage, setAudioLanguage] = useState('');
+  const [showDurationDropdown, setShowDurationDropdown] = useState(false);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [showConfetti, setShowConfetti] = useState(false);
+  const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
+  const [showSectionTitle, setShowSectionTitle] = useState(true);
 
   useEffect(() => {
     const savedState = localStorage.getItem('surveyState');
@@ -105,6 +114,12 @@ const Form = () => {
     localStorage.setItem('surveyState', JSON.stringify({ name, email, answers, currentSection, currentQuestion, showSurvey }));
   }, [name, email, answers, currentSection, currentQuestion, showSurvey]);
 
+  useEffect(() => {
+    const totalQuestions = questions.reduce((total, section) => total + section.questions.length, 0);
+    const answeredQuestions = Object.keys(answers).length;
+    setAllQuestionsAnswered(answeredQuestions === totalQuestions);
+  }, [answers]);
+
   const handleUserInfoSubmit = (e) => {
     e.preventDefault();
     if (name && email) {
@@ -119,6 +134,20 @@ const Form = () => {
       ...answers,
       [`${currentSection}-${currentQuestion}`]: answer
     });
+    const isLastQuestion = currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1;
+    if (questions[currentSection].questions[currentQuestion].type === 'multiple' && !isLastQuestion) {
+      nextQuestion();
+    }
+  };
+
+  const handleTextInputChange = (e) => {
+    handleAnswer(e.target.value);
+  };
+
+  const handleTextInputKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      nextQuestion();
+    }
   };
 
   const nextQuestion = () => {
@@ -126,7 +155,10 @@ const Form = () => {
       setCurrentQuestion(currentQuestion + 1);
     } else if (currentSection < questions.length - 1) {
       setCurrentSection(currentSection + 1);
-      setCurrentQuestion(-1); // Set to -1 to show the title page of the next section
+      setCurrentQuestion(0);
+      setShowSectionTitle(true);
+    } else {
+      submitSurvey();
     }
   };
 
@@ -139,7 +171,11 @@ const Form = () => {
     }
   };
 
-  const submitSurvey = async () => {
+  const submitSurvey = () => {
+    setShowAudioOptions(true);
+  };
+
+  const submitAudioPreferences = () => {
     const surveyData = {
       name,
       email,
@@ -148,45 +184,126 @@ const Form = () => {
           question: question.question,
           answer: answers[`${sectionIndex}-${questionIndex}`] || ''
         }))
-      )
+      ),
+      audioPreferences: {
+        duration: audioDuration,
+        language: audioLanguage
+      }
     };
 
-    try {
-      const response = await fetch('https://hook.eu2.make.com/scyn2yen4r28tc8lzbbcqlsdca1us3y5', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(surveyData),
-      });
+    // Simulating a POST request to the webhook
+    console.log('Sending data to webhook:', JSON.stringify(surveyData));
+    // In a real scenario, you would use fetch or axios to send the data
+    // fetch('http://your-webhook-url.com', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify(surveyData)
+    // })
+    // .then(response => response.json())
+    // .then(data => console.log('Success:', data))
+    // .catch((error) => console.error('Error:', error));
 
-      if (response.ok) {
-        setIsSubmitted(true);
-        localStorage.removeItem('surveyState'); // Clear local storage after successful submission
-      } else {
-        console.error('Failed to submit survey');
-        // You might want to show an error message to the user here
-      }
-    } catch (error) {
-      console.error('Error submitting survey:', error);
-      // You might want to show an error message to the user here
-    }
+    setShowConfetti(true);
+    setIsSubmitted(true);
+    localStorage.removeItem('surveyState');
+  };
+
+  const renderAudioOptions = () => {
+    return (
+      <div className="audio-options">
+        <h2>Customize Your Audio Response</h2>
+        <p>Based on your answers, we will craft an audio response addressing your concerns and questions.</p>
+        
+        <div className="option-group">
+          <h3>Select audio duration:</h3>
+          <div className="dropdown">
+            <button 
+              className="dropdown-toggle"
+              onClick={() => setShowDurationDropdown(!showDurationDropdown)}
+            >
+              {audioDuration ? `Around ${audioDuration} minutes` : 'Select duration'}
+              <ChevronDown size={20} />
+            </button>
+            {showDurationDropdown && (
+              <div className="dropdown-menu">
+                <button onClick={() => { setAudioDuration('2'); setShowDurationDropdown(false); }}>Around 2 minutes</button>
+                <button onClick={() => { setAudioDuration('5'); setShowDurationDropdown(false); }}>Around 5 minutes</button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="option-group">
+          <h3>Select audio language:</h3>
+          <div className="dropdown">
+            <button 
+              className="dropdown-toggle"
+              onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
+            >
+              {audioLanguage || 'Select language'}
+              <ChevronDown size={20} />
+            </button>
+            {showLanguageDropdown && (
+              <div className="dropdown-menu">
+                {['English', 'Mandarin', 'Hindi', 'Spanish', 'French', 'Arabic', 'Bengali', 'Russian', 'Portuguese', 'Indonesian'].map((language) => (
+                  <button 
+                    key={language}
+                    onClick={() => { setAudioLanguage(language); setShowLanguageDropdown(false); }}
+                  >
+                    {language}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <button 
+          className="return-button"
+          onClick={() => {
+            setShowAudioOptions(false);
+            setCurrentSection(questions.length - 1);
+            setCurrentQuestion(questions[questions.length - 1].questions.length - 1);
+          }}
+        >
+          Return to Questions
+        </button>
+
+        <button 
+          className="submit-button"
+          onClick={submitAudioPreferences}
+          disabled={!audioDuration || !audioLanguage}
+        >
+          Submit Preferences
+        </button>
+      </div>
+    );
   };
 
   const renderContent = () => {
     if (isSubmitted) {
       return (
         <div className="thank-you-message">
-          <h2>Thank you {name}, for completing the questionnaire!</h2>
-          <p>Your responses have been submitted successfully.</p>
+          <h2>Thank you, {name}!</h2>
+          <p>Your questionnaire has been successfully submitted.</p>
+          <p>We appreciate your time and valuable input.</p>
+          <p>An audio response addressing your concerns and questions will be crafted based on your preferences:</p>
+          <ul>
+            <li>Duration: Around {audioDuration} minutes</li>
+            <li>Language: {audioLanguage}</li>
+          </ul>
+          <p>We'll send it to your email: {email}</p>
         </div>
       );
     }
 
-    if (currentQuestion === -1) {
-      // Section title page
+    if (showAudioOptions) {
+      return renderAudioOptions();
+    }
+
+    if (showSectionTitle) {
       return (
-        <div className="section-title" onClick={() => setCurrentQuestion(0)}>
+        <div className="section-title" onClick={() => setShowSectionTitle(false)}>
           <h2>{questions[currentSection].section}</h2>
           <p className="tap-to-continue">Tap to continue</p>
         </div>
@@ -195,7 +312,7 @@ const Form = () => {
 
     const currentQuestionData = questions[currentSection].questions[currentQuestion];
     const savedAnswer = answers[`${currentSection}-${currentQuestion}`];
-    const questionNumber = currentSection * 4 + currentQuestion + 1; // Calculate question number
+    const questionNumber = currentSection * 4 + currentQuestion + 1;
 
     return (
       <>
@@ -208,10 +325,7 @@ const Form = () => {
             {currentQuestionData.options.map((option, index) => (
               <button
                 key={index}
-                onClick={() => {
-                  handleAnswer(option);
-                  nextQuestion();
-                }}
+                onClick={() => handleAnswer(option)}
                 className={`option-button ${savedAnswer === option ? 'selected' : ''}`}
               >
                 {option}
@@ -222,8 +336,8 @@ const Form = () => {
           <input
             type="text"
             value={savedAnswer || ''}
-            onChange={(e) => handleAnswer(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && nextQuestion()}
+            onChange={handleTextInputChange}
+            onKeyPress={handleTextInputKeyPress}
             className="text-input"
             placeholder="Type your answer..."
           />
@@ -266,15 +380,17 @@ const Form = () => {
 
   return (
     <div className="form-container">
+      {showConfetti && <ReactConfetti recycle={false} numberOfPieces={200} />}
       <img src={TopLeftLogo} alt="AFS Logo" className="top-left-logo" />
-      {!isSubmitted && (
+      {!isSubmitted && !showAudioOptions && (
         <div className="section-progress">
           {questions.map((section, index) => (
             <button
               key={index}
               onClick={() => {
                 setCurrentSection(index);
-                setCurrentQuestion(-1); // Set to -1 to show the title page when clicking on a section
+                setCurrentQuestion(0);
+                setShowSectionTitle(true);
               }}
               className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
             >
@@ -286,7 +402,7 @@ const Form = () => {
       <div className="form-content">
         {renderContent()}
       </div>
-      {currentQuestion !== -1 && !isSubmitted && (
+      {!isSubmitted && !showAudioOptions && !showSectionTitle && (
         <div className="navigation-buttons">
           <button
             onClick={prevQuestion}
@@ -295,18 +411,22 @@ const Form = () => {
           >
             <ChevronLeft size={24} />
           </button>
-          <button
-            onClick={() => {
-              if (currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1) {
-                submitSurvey();
-              } else {
-                nextQuestion();
-              }
-            }}
-            className="nav-button next"
-          >
-            {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? 'Submit' : <ChevronRight size={24} />}
-          </button>
+          {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? (
+            <button
+              onClick={submitSurvey}
+              className="submit-button"
+              disabled={!allQuestionsAnswered}
+            >
+              Submit
+            </button>
+          ) : (
+            <button
+              onClick={nextQuestion}
+              className="nav-button next"
+            >
+              <ChevronRight size={24} />
+            </button>
+          )}
         </div>
       )}
     </div>

@@ -13,43 +13,42 @@ body, html {
 .form-container, .email-container {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  padding: 5vh 5vw;
+  min-height: 100vh;
+  width: 100%;
+  padding: 60px 20px 20px; /* Adjusted padding */
   box-sizing: border-box;
-  justify-content: center; /* Center vertically */
-  align-items: center; /* Center horizontally */
-  position: relative; /* Added for absolute positioning of children */
+  justify-content: flex-start;
+  align-items: center;
+  position: relative;
+  background-color: #006eb6; /* Ensure background color */
 }
 
 .top-left-logo {
   position: absolute;
-  top: 20px; /* Adjusted from 15px to move it slightly further down */
-  left: 20px;
-  width: 40px; /* Reduced from 50px */
-  height: 40px; /* Reduced from 50px */
+  top: 15px;
+  left: 15px;
+  width: 30px;
+  height: 30px;
 }
 
 .section-progress {
   display: flex;
   justify-content: space-between;
-  margin-top: 0; /* Changed from 80px */
-  margin-bottom: 30px;
   background-color: rgba(255, 255, 255, 0.1);
   border-radius: 20px;
-  padding: 10px 15px; /* Reduced vertical padding */
+  padding: 8px 12px;
   position: absolute;
-  top: 20px; /* Adjusted to match the logo's top position */
-  left: 80px; /* Give some space after the logo */
-  right: 20px;
-  height: 40px; /* Set a fixed height to match the logo */
+  top: 15px;
+  left: 60px;
+  right: 15px;
+  height: 40px;
 }
 
 .section-progress-item {
   flex: 1;
-  padding: 0 8px; /* Removed vertical padding */
+  padding: 0 6px;
   text-align: center;
-  font-size: 14px; /* Reduced font size */
+  font-size: 14px;
   border-radius: 16px;
   transition: all 0.3s ease;
   background: none;
@@ -59,46 +58,50 @@ body, html {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%; /* Make sure it takes full height of the container */
+  height: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .section-progress-item.active {
-  background-color: rgba(255, 255, 255, 0.2);
   opacity: 1;
   font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .form-content {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Changed from center to flex-start */
+  justify-content: center;
   align-items: center;
-  padding-top: 100px; /* Reduced from 80px to bring content higher */
-  padding-bottom: 100px; /* Increased to make space for navigation buttons */
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding-bottom: 80px; /* Add padding to ensure content doesn't overlap with navigation */
 }
 
 .question-text {
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 600;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   color: #ffffff;
   line-height: 1.3;
   text-align: center;
-  max-width: 80%; /* Added to limit width for better readability */
+  width: 100%;
 }
 
 .options-container {
   display: flex;
   flex-direction: column;
-  gap: 2vh;
-  width: 100%; /* Added to ensure full width */
-  max-width: 500px; /* Added to limit width on larger screens */
+  gap: 15px;
+  width: 100%;
 }
 
 .option-button {
-  font-size: 18px;
-  padding: 2vh 3vw;
+  font-size: 16px;
+  padding: 15px;
   border-radius: 12px;
   transition: all 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -106,164 +109,348 @@ body, html {
   color: #ffffff;
   text-align: left;
   cursor: pointer;
+  width: 100%;
+  min-height: 50px;
 }
 
-.option-button:hover, .option-button.selected {
-  background-color: rgba(255, 255, 255, 0.2);
+.option-button.selected {
+  background-color: rgba(255, 255, 255, 0.3);
   border-color: #ffffff;
 }
 
 .text-input, .email-input {
   width: 100%;
-  padding: 2vh 3vw;
+  padding: 15px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 12px;
-  font-size: 18px;
+  font-size: 16px;
   background-color: rgba(255, 255, 255, 0.1);
   color: #ffffff;
   box-sizing: border-box;
-  margin-bottom: 2vh;
+  margin-bottom: 15px;
 }
 
 .text-input::placeholder, .email-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.5); /* Lighter grey for placeholder text */
 }
 
 .navigation-buttons {
-  position: absolute;
-  bottom: 60px; /* Increased from 30px to move buttons higher */
-  left: 5vw;
-  right: 5vw;
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
   display: flex;
   justify-content: space-between;
+  align-items: center; /* Add this line to vertically align items */
+  z-index: 1000;
 }
 
-.nav-button {
+.nav-button, .submit-button {
   background-color: rgba(255, 255, 255, 0.2);
   color: white;
-  padding: 2vh;
+  padding: 12px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
+  min-width: 44px;
+  min-height: 44px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
 }
 
-.nav-button:hover:not(:disabled) {
+.submit-button {
+  padding: 10px 20px;
   background-color: rgba(255, 255, 255, 0.3);
-  transform: scale(1.05);
+  font-weight: bold;
+  border-radius: 50px;
+  min-width: auto;
+  min-height: auto;
 }
 
-.nav-button:disabled {
+.nav-button:hover, .submit-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.4);
+}
+
+.nav-button:disabled, .submit-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.submit-button svg {
+  margin-left: 8px;
 }
 
 .email-submit-button {
   width: 100%;
-  padding: 12px;
+  padding: 15px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0.2);
   color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
-}
-
-.email-submit-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
+  margin-top: 15px;
 }
 
 .section-title {
   text-align: center;
   cursor: pointer;
-  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
 
 .section-title h2 {
-  font-size: 36px;
+  font-size: 28px;
   margin-bottom: 20px;
 }
 
 .tap-to-continue {
-  font-size: 18px;
-  color: rgba(255, 255, 255, 0.5); /* Greyed out text */
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.5);
   margin-top: 20px;
 }
 
-.start-section-button {
-  font-size: 18px;
-  padding: 12px 24px;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.start-section-button:hover {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
 @media (min-width: 768px) {
+  .question-text {
+    font-size: 28px;
+  }
+
+  .option-button, .text-input, .email-input, .email-submit-button {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
   .form-container, .email-container {
-    max-width: 100%; /* Changed from 560px to allow full width */
-    margin: 0 auto;
+    padding: 70px 15px 70px;
+  }
+
+  .section-progress {
+    height: 36px;
   }
 
   .section-progress-item {
-    font-size: 16px; /* Slightly reduced from 18px */
-    white-space: nowrap; /* Prevent text from wrapping */
-    overflow: hidden;
-    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    font-size: 11px;
+    padding: 0 4px;
   }
 
   .question-text {
-    font-size: 32px;
+    font-size: 20px;
   }
 
-  .form-content {
-    padding-top: 0; /* Ensure no top padding on larger screens */
+  .option-button, .text-input, .email-input, .email-submit-button {
+    font-size: 14px;
+    padding: 12px;
+  }
+
+  .nav-button, .submit-button {
+    padding: 10px;
+    font-size: 14px;
+    min-width: 40px;
+    min-height: 40px;
+  }
+
+  .submit-button {
+    padding: 10px 20px;
+  }
+
+  .navigation-buttons {
+    bottom: 20px;
   }
 }
 
-.question-number {
-  font-weight: bold;
-  margin-right: 8px;
+/* Add a new media query for devices with navigation bars */
+@media (max-height: 700px) {
+  .form-container, .email-container {
+    padding-bottom: 100px; /* Further increase bottom padding */
+  }
+
+  .navigation-buttons {
+    bottom: 80px; /* Raise the buttons even higher */
+  }
 }
 
-.email-container {
+/* Ensure background color consistency */
+#root, .App {
+  background-color: #006eb6;
+  min-height: 100vh;
+}
+
+.audio-options {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  width: 100vw;
-  padding: 5vh 5vw;
-  box-sizing: border-box;
-  justify-content: flex-start; /* Changed from center to flex-start */
   align-items: center;
-  position: relative;
-}
-
-.email-content {
   width: 100%;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  max-width: 450px;
+  margin: 0 auto;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.audio-options h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
   text-align: center;
-  margin-top: calc(15vh + 40px); /* Adjusted to account for the logo's new position */
+}
+
+.audio-options p {
+  font-size: 16px;
+  margin-bottom: 25px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.option-group {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.option-group h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.return-button, .submit-button {
+  width: 100%;
+  max-width: 250px;
+  margin: 8px 0;
+  padding: 10px 15px;
+  font-size: 16px;
+  border-radius: 6px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.return-button:hover, .submit-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.dropdown {
+  position: relative;
+  width: 100%;
+}
+
+.dropdown-toggle {
+  width: 100%;
+  padding: 10px 15px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background-color: #006eb6;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 6px;
+  max-height: 160px;
+  overflow-y: auto;
+  z-index: 1000;
+  animation: slideDown 0.3s ease-out;
+}
+
+.dropdown-menu button {
+  width: 100%;
+  padding: 8px 15px;
+  border: none;
+  background-color: transparent;
+  color: #ffffff;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-menu button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.return-button {
+  width: 100%;
+  max-width: 300px;
+  margin: 10px 0;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.return-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.submit-button {
+  width: 100%;
+  max-width: 300px;
+  margin: 10px 0;
+  padding: 12px 20px;
+  font-size: 16px;
+  border-radius: 12px;
+}
+
+/* Custom scrollbar styles */
+.dropdown-menu::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .thank-you-message {
   text-align: center;
-  max-width: 80%;
+  max-width: 600px;
   margin: 0 auto;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .thank-you-message h2 {
@@ -275,14 +462,78 @@ body, html {
 .thank-you-message p {
   font-size: 18px;
   color: #ffffff;
+  margin-bottom: 15px;
 }
 
-@media (max-height: 700px) {
-  .form-content {
-    padding-top: 80px; /* Further reduce top padding for smaller screens */
+.thank-you-message ul {
+  list-style-type: none;
+  padding: 0;
+  margin-bottom: 15px;
+}
+
+.thank-you-message li {
+  font-size: 16px;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+@media (max-width: 480px) {
+  .audio-options h2 {
+    font-size: 20px;
   }
 
-  .navigation-buttons {
-    bottom: 40px; /* Move buttons even higher on smaller screens */
+  .audio-options p {
+    font-size: 14px;
+  }
+
+  .option-group h3 {
+    font-size: 16px;
+  }
+
+  .return-button, .submit-button, .dropdown-toggle {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+
+  .dropdown-menu button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  .navigation-buttons .submit-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Adjust the submit button on the last question */
+.navigation-buttons .submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  min-width: auto;
+  min-height: auto;
+  border-radius: 50px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Make the back arrow a perfect circle on all questions, including the last one */
+.navigation-buttons .nav-button.prev {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: white;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  /* ... (other mobile styles remain unchanged) */
+
+  .navigation-buttons .nav-button.prev {
+    width: 40px;
+    height: 40px;
   }
 }
