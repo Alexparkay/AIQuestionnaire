@@ -191,21 +191,23 @@ const Form = () => {
       }
     };
 
-    // Simulating a POST request to the webhook
-    console.log('Sending data to webhook:', JSON.stringify(surveyData));
-    // In a real scenario, you would use fetch or axios to send the data
-    // fetch('http://your-webhook-url.com', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify(surveyData)
-    // })
-    // .then(response => response.json())
-    // .then(data => console.log('Success:', data))
-    // .catch((error) => console.error('Error:', error));
-
-    setShowConfetti(true);
-    setIsSubmitted(true);
-    localStorage.removeItem('surveyState');
+    // Send data to the webhook
+    fetch('http://127.0.0.1:5000/webhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(surveyData)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Success:', data);
+      setShowConfetti(true);
+      setIsSubmitted(true);
+      localStorage.removeItem('surveyState');
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      // You might want to show an error message to the user here
+    });
   };
 
   const renderAudioOptions = () => {
