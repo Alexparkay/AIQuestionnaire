@@ -6,73 +6,73 @@ import TopLeftLogo from './Top_left_logo.svg';
 
 const questions = [
   {
-    section: "Opportunities of AI",
+    section: "Opportunities\nof AI",
     questions: [
       {
-        question: "Which AI application excites you the most?",
+        question: "Which AI application do you find most promising for global citizenship?",
         type: "multiple",
-        options: ["Automation", "Personalization", "Global collaboration", "Education"]
+        options: ["Language translation", "Cultural exchange platforms", "Educational tools", "Environmental monitoring"]
       },
       {
-        question: "In one word, how would you describe the future of AI?",
+        question: "In one word, how would you describe AI's potential impact on global citizenship?",
         type: "text"
       },
       {
-        question: "What's the biggest benefit of AI in your opinion?",
+        question: "What's the biggest benefit of AI for fostering international understanding?",
         type: "multiple",
-        options: ["Efficiency", "Accessibility", "Innovation", "Problem-solving"]
+        options: ["Breaking language barriers", "Facilitating virtual exchanges", "Personalizing cultural learning", "Enhancing global collaboration"]
       },
       {
-        question: "What's your primary concern about AI?",
+        question: "What's your primary concern about AI in the context of global citizenship?",
         type: "multiple",
-        options: ["Job displacement", "Privacy issues", "Ethical concerns", "Over-reliance on technology"]
+        options: ["Cultural homogenization", "Privacy issues", "Unequal access to technology", "Over-reliance on virtual interactions"]
       }
     ]
   },
   {
-    section: "Responsible AI",
+    section: "Responsibilities\nof AI",
     questions: [
       {
-        question: "How important do you think AI transparency is?",
+        question: "How important do you think ethical considerations are in AI development for global initiatives?",
         type: "multiple",
         options: ["Very important", "Somewhat important", "Not very important", "Not sure"]
       },
       {
-        question: "Who should be primarily responsible for AI governance?",
+        question: "Who should take the lead in ensuring AI promotes responsible global citizenship?",
         type: "multiple",
-        options: ["Governments", "Tech companies", "Independent bodies", "Collaborative effort"]
+        options: ["International organizations", "Tech companies", "Governments", "Educational institutions"]
       },
       {
-        question: "What's the most crucial aspect of AI ethics?",
+        question: "What's the most crucial aspect of AI ethics in a global context?",
         type: "multiple",
-        options: ["Fairness", "Privacy", "Accountability", "Transparency"]
+        options: ["Cultural sensitivity", "Data privacy", "Fairness across diverse populations", "Transparency of AI decision-making"]
       },
       {
-        question: "Do you believe current AI regulations are:",
+        question: "Do you believe current international AI guidelines are:",
         type: "multiple",
-        options: ["Too strict", "Adequate", "Not strict enough", "I don't know enough to say"]
+        options: ["Too strict", "Adequate", "Not comprehensive enough", "I don't know enough to say"]
       }
     ]
   },
   {
-    section: "AI in Action",
+    section: "AI in\nAction",
     questions: [
       {
-        question: "How comfortable are you with using AI in your daily work/life?",
+        question: "How do you envision AI enhancing AFS's intercultural learning programs?",
         type: "multiple",
-        options: ["Very comfortable", "Somewhat comfortable", "Not very comfortable", "Not at all comfortable"]
+        options: ["Improved participant matching", "Enhanced pre-departure training", "Real-time language support", "Personalized cultural adaptation tools"]
       },
       {
-        question: "What AI skill do you think is most important to develop?",
+        question: "What AI-related skill do you think is most important for AFS to develop?",
         type: "multiple",
-        options: ["Data analysis", "AI ethics", "Programming", "Critical thinking"]
+        options: ["Data analysis for program improvement", "AI ethics in cross-cultural contexts", "AI-enhanced intercultural training", "Automated language processing"]
       },
       {
-        question: "In one or two words, what's your biggest takeaway from this presentation?",
+        question: "In one or two words, what's your biggest hope for AI in AFS's future?",
         type: "text"
       },
       {
-        question: "After this presentation, how likely are you to learn more about AI?",
+        question: "After this presentation, how likely are you to advocate for AI integration in AFS programs?",
         type: "multiple",
         options: ["Very likely", "Somewhat likely", "Not very likely", "Not at all likely"]
       }
@@ -176,6 +176,10 @@ const Form = () => {
   };
 
   const submitAudioPreferences = () => {
+    // Immediately show the thank you page and confetti
+    setShowConfetti(true);
+    setIsSubmitted(true);
+
     const surveyData = {
       name,
       email,
@@ -186,12 +190,12 @@ const Form = () => {
         }))
       ),
       audioPreferences: {
-        duration: audioDuration,
+        duration: audioDuration.split(' - ')[0], // Extract just the duration part
         language: audioLanguage
       }
     };
 
-    // Send data to the webhook
+    // Send data to the webhook after showing the thank you page
     fetch('http://127.0.0.1:5000/webhook', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -200,8 +204,6 @@ const Form = () => {
     .then(response => response.json())
     .then(data => {
       console.log('Success:', data);
-      setShowConfetti(true);
-      setIsSubmitted(true);
       localStorage.removeItem('surveyState');
     })
     .catch((error) => {
@@ -223,13 +225,17 @@ const Form = () => {
               className="dropdown-toggle"
               onClick={() => setShowDurationDropdown(!showDurationDropdown)}
             >
-              {audioDuration ? `Around ${audioDuration} minutes` : 'Select duration'}
+              {audioDuration ? `${audioDuration}` : 'Select duration'}
               <ChevronDown size={20} />
             </button>
             {showDurationDropdown && (
               <div className="dropdown-menu">
-                <button onClick={() => { setAudioDuration('2'); setShowDurationDropdown(false); }}>Around 2 minutes</button>
-                <button onClick={() => { setAudioDuration('5'); setShowDurationDropdown(false); }}>Around 5 minutes</button>
+                <button onClick={() => { setAudioDuration('30 seconds - AI Espresso Shot'); setShowDurationDropdown(false); }}>
+                  30 seconds - AI Espresso Shot
+                </button>
+                <button onClick={() => { setAudioDuration('2 minutes - AI Deep Dive'); setShowDurationDropdown(false); }}>
+                  2 minutes - AI Deep Dive
+                </button>
               </div>
             )}
           </div>
@@ -247,7 +253,7 @@ const Form = () => {
             </button>
             {showLanguageDropdown && (
               <div className="dropdown-menu">
-                {['English', 'Mandarin', 'Hindi', 'Spanish', 'French', 'Arabic', 'Bengali', 'Russian', 'Portuguese', 'Indonesian'].map((language) => (
+                {['English', 'Spanish', 'French', 'Russian', 'Turkish', 'Arabic', 'Hindi', 'Mandarin'].map((language) => (
                   <button 
                     key={language}
                     onClick={() => { setAudioLanguage(language); setShowLanguageDropdown(false); }}
@@ -276,7 +282,7 @@ const Form = () => {
           onClick={submitAudioPreferences}
           disabled={!audioDuration || !audioLanguage}
         >
-          Submit Preferences
+          Generate {audioDuration ? audioDuration.split(' - ')[0] : ''} Audio
         </button>
       </div>
     );
@@ -291,7 +297,7 @@ const Form = () => {
           <p>We appreciate your time and valuable input.</p>
           <p>An audio response addressing your concerns and questions will be crafted based on your preferences:</p>
           <ul>
-            <li>Duration: Around {audioDuration} minutes</li>
+            <li>Duration: {audioDuration}</li>
             <li>Language: {audioLanguage}</li>
           </ul>
           <p>We'll send it to your email: {email}</p>
@@ -396,7 +402,12 @@ const Form = () => {
               }}
               className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
             >
-              {section.section}
+              {section.section.split('\n').map((line, i) => (
+                <React.Fragment key={i}>
+                  {line}
+                  {i !== section.section.split('\n').length - 1 && <br />}
+                </React.Fragment>
+              ))}
             </button>
           ))}
         </div>
