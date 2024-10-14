@@ -195,8 +195,10 @@ const Form = () => {
       }
     };
 
+    const webhookUrl = 'https://ai-podcast-603006204318.europe-west2.run.app/webhook';
+
     // Send data to the webhook after showing the thank you page
-    fetch('http://127.0.0.1:5000/webhook', {
+    fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(surveyData)
