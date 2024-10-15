@@ -1,31 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
 import ReactConfetti from 'react-confetti';
+import { useSpring, animated, useTrail } from 'react-spring';
 import './Form.css';
 import TopLeftLogo from './Top_left_logo.svg';
+import WorldMap from './worldmap.svg';  // Make sure this import is correct
 
 const questions = [
   {
     section: "Opportunities\nof AI",
     questions: [
       {
-        question: "Which AI application do you find most promising for global citizenship?",
+        question: "How can AI best support AFS's mission?",
         type: "multiple",
-        options: ["Language translation", "Cultural exchange platforms", "Educational tools", "Environmental monitoring"]
+        options: ["Facilitate cross-language communication", "Personalize global learning", "Create new online connections", "Reach underserved communities"]
       },
       {
-        question: "In one word, how would you describe AI's potential impact on global citizenship?",
-        type: "text"
+        question: "How can AI help AFS engage diverse communities?",
+        type: "multiple",
+        options: ["Increase access to global education", "Remove language and time barriers", "Enable real-time global connections", "Expand to hard-to-reach areas"]
       },
       {
-        question: "What's the biggest benefit of AI for fostering international understanding?",
+        question: "What role should AI play in AFS's social impact?",
         type: "multiple",
-        options: ["Breaking language barriers", "Facilitating virtual exchanges", "Personalizing cultural learning", "Enhancing global collaboration"]
-      },
-      {
-        question: "What's your primary concern about AI in the context of global citizenship?",
-        type: "multiple",
-        options: ["Cultural homogenization", "Privacy issues", "Unequal access to technology", "Over-reliance on virtual interactions"]
+        options: ["Enhance existing programs", "Launch diversity initiatives", "Foster intercultural understanding", "Empower self-directed learning"]
       }
     ]
   },
@@ -33,24 +31,19 @@ const questions = [
     section: "Responsibilities\nof AI",
     questions: [
       {
-        question: "How important do you think ethical considerations are in AI development for global initiatives?",
+        question: "Which AI ethics area should AFS prioritize?",
         type: "multiple",
-        options: ["Very important", "Somewhat important", "Not very important", "Not sure"]
+        options: ["Fairness and inclusion", "Transparency", "Human oversight", "Balancing innovation and ethics"]
       },
       {
-        question: "Who should take the lead in ensuring AI promotes responsible global citizenship?",
+        question: "How crucial is aligning AI with AFS values?",
         type: "multiple",
-        options: ["International organizations", "Tech companies", "Governments", "Educational institutions"]
+        options: ["Always essential", "Important, but flexible", "Not always necessary", "Balance ethics and innovation"]
       },
       {
-        question: "What's the most crucial aspect of AI ethics in a global context?",
+        question: "How should AFS handle AI data governance?",
         type: "multiple",
-        options: ["Cultural sensitivity", "Data privacy", "Fairness across diverse populations", "Transparency of AI decision-making"]
-      },
-      {
-        question: "Do you believe current international AI guidelines are:",
-        type: "multiple",
-        options: ["Too strict", "Adequate", "Not comprehensive enough", "I don't know enough to say"]
+        options: ["Be transparent about data use", "Prioritize privacy", "Follow global AI standards", "Update policies for ethical compliance"]
       }
     ]
   },
@@ -58,23 +51,24 @@ const questions = [
     section: "AI in\nAction",
     questions: [
       {
-        question: "How do you envision AI enhancing AFS's intercultural learning programs?",
+        question: "What's the best AI strategy for AFS?",
         type: "multiple",
-        options: ["Improved participant matching", "Enhanced pre-departure training", "Real-time language support", "Personalized cultural adaptation tools"]
+        options: ["Launch global citizenship AI projects", "Improve internal processes", "Partner with AI innovators", "Expand global reach"]
       },
       {
-        question: "What AI-related skill do you think is most important for AFS to develop?",
+        question: "How can AFS pilot impactful AI projects?",
         type: "multiple",
-        options: ["Data analysis for program improvement", "AI ethics in cross-cultural contexts", "AI-enhanced intercultural training", "Automated language processing"]
+        options: ["Start small, high-impact initiatives", "Collaborate on AI testing", "Use AI to grow programs", "Focus on scalable solutions"]
       },
       {
-        question: "In one or two words, what's your biggest hope for AI in AFS's future?",
-        type: "text"
+        question: "How can AI support AFS's internal growth?",
+        type: "multiple",
+        options: ["Automate tasks for staff focus", "Improve data-driven decisions", "Enhance global communication", "Streamline operations"]
       },
       {
-        question: "After this presentation, how likely are you to advocate for AI integration in AFS programs?",
+        question: "How important is AI to AFS's future?",
         type: "multiple",
-        options: ["Very likely", "Somewhat likely", "Not very likely", "Not at all likely"]
+        options: ["Essential (100%)", "Very important (75%)", "Somewhat important (50%)", "Not very important (25%)"]
       }
     ]
   }
@@ -96,6 +90,37 @@ const Form = () => {
   const [showConfetti, setShowConfetti] = useState(false);
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [showSectionTitle, setShowSectionTitle] = useState(true);
+  const [direction, setDirection] = useState(1);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [progressPoints, setProgressPoints] = useState([]);
+  const [completedLines, setCompletedLines] = useState([]);
+
+  const totalQuestions = questions.reduce((total, section) => total + section.questions.length, 0);
+  const currentQuestionNumber = questions.slice(0, currentSection).reduce((total, section) => total + section.questions.length, 0) + currentQuestion + 1;
+
+  const progressTrail = useTrail(totalQuestions, {
+    width: `${(100 / totalQuestions) * currentQuestionNumber}%`,
+    from: { width: '0%' },
+    config: { mass: 1, tension: 280, friction: 60 },
+  });
+
+  const slideAnimation = useSpring({
+    opacity: 1,
+    transform: `translateX(${direction * 0}%)`,
+    from: { opacity: 0, transform: `translateX(${direction * 100}%)` },
+    config: { mass: 1, tension: 80, friction: 26 }
+  });
+
+  const parallaxAnimation = useSpring({
+    from: { backgroundPositionY: '0%' },
+    to: async (next) => {
+      while (true) {
+        await next({ backgroundPositionY: '100%' });
+        await next({ backgroundPositionY: '0%' });
+      }
+    },
+    config: { duration: 20000 },
+  });
 
   useEffect(() => {
     const savedState = localStorage.getItem('surveyState');
@@ -120,6 +145,17 @@ const Form = () => {
     setAllQuestionsAnswered(answeredQuestions === totalQuestions);
   }, [answers]);
 
+  useEffect(() => {
+    // Generate random points once when the component mounts
+    setProgressPoints(generateRandomPoints(totalQuestions));
+  }, []);
+
+  useEffect(() => {
+    if (currentQuestionNumber > 1) {
+      setCompletedLines(prev => [...prev, currentQuestionNumber - 1]);
+    }
+  }, [currentQuestionNumber]);
+
   const handleUserInfoSubmit = (e) => {
     e.preventDefault();
     if (name && email) {
@@ -130,13 +166,18 @@ const Form = () => {
   };
 
   const handleAnswer = (answer) => {
+    setSelectedAnswer(answer);
     setAnswers({
       ...answers,
       [`${currentSection}-${currentQuestion}`]: answer
     });
+    
     const isLastQuestion = currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1;
+    
     if (questions[currentSection].questions[currentQuestion].type === 'multiple' && !isLastQuestion) {
-      nextQuestion();
+      setTimeout(() => {
+        nextQuestion();
+      }, 500); // Changed from 1000 to 500 milliseconds
     }
   };
 
@@ -151,6 +192,7 @@ const Form = () => {
   };
 
   const nextQuestion = () => {
+    setDirection(1);
     if (currentQuestion < questions[currentSection].questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1);
     } else if (currentSection < questions.length - 1) {
@@ -163,6 +205,7 @@ const Form = () => {
   };
 
   const prevQuestion = () => {
+    setDirection(-1);
     if (currentQuestion > 0) {
       setCurrentQuestion(currentQuestion - 1);
     } else if (currentSection > 0) {
@@ -290,6 +333,52 @@ const Form = () => {
     );
   };
 
+  const renderProgressAnimation = () => (
+    <div className="progress-container">
+      <img src={WorldMap} alt="World Map" className="world-map-background" />
+      <svg className="progress-svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
+        {completedLines.map((lineIndex) => {
+          const startPoint = progressPoints[lineIndex - 1];
+          const endPoint = progressPoints[lineIndex];
+          return (
+            <line
+              key={lineIndex}
+              x1={`${startPoint.x}%`}
+              y1={`${startPoint.y}%`}
+              x2={`${endPoint.x}%`}
+              y2={`${endPoint.y}%`}
+              stroke="#ffffff"
+              strokeWidth="2"
+              className="progress-line"
+            />
+          );
+        })}
+      </svg>
+      {progressPoints.map((point, index) => (
+        <div
+          key={index}
+          className={`progress-point ${index < currentQuestionNumber ? 'active' : ''}`}
+          style={{ 
+            left: `${point.x}%`, 
+            top: `${point.y}%`,
+            opacity: index < currentQuestionNumber ? 1 : 0
+          }}
+        />
+      ))}
+    </div>
+  );
+
+  const generateRandomPoints = (count) => {
+    const points = [];
+    for (let i = 0; i < count; i++) {
+      points.push({
+        x: (i / (count - 1)) * 100,
+        y: 30 + Math.random() * 40 // Random y position between 30% and 70%
+      });
+    }
+    return points;
+  };
+
   const renderContent = () => {
     if (isSubmitted) {
       return (
@@ -322,10 +411,10 @@ const Form = () => {
 
     const currentQuestionData = questions[currentSection].questions[currentQuestion];
     const savedAnswer = answers[`${currentSection}-${currentQuestion}`];
-    const questionNumber = currentSection * 4 + currentQuestion + 1;
+    const questionNumber = currentSection * 3 + currentQuestion + 1;
 
     return (
-      <>
+      <animated.div style={slideAnimation}>
         <h3 className="question-text">
           <span className="question-number">{questionNumber}. </span>
           {currentQuestionData.question}
@@ -336,7 +425,7 @@ const Form = () => {
               <button
                 key={index}
                 onClick={() => handleAnswer(option)}
-                className={`option-button ${savedAnswer === option ? 'selected' : ''}`}
+                className={`option-button ${savedAnswer === option ? 'selected' : ''} ${selectedAnswer === option ? 'animate' : ''}`}
               >
                 {option}
               </button>
@@ -352,7 +441,7 @@ const Form = () => {
             placeholder="Type your answer..."
           />
         )}
-      </>
+      </animated.div>
     );
   };
 
@@ -379,7 +468,7 @@ const Form = () => {
               className="email-input"
               required
             />
-            <button type="submit" className="email-submit-button">
+            <button type="submit" className="email-submit-button" style={{ color: '#ffffff' }}>
               Start Questionnaire
             </button>
           </form>
@@ -389,30 +478,33 @@ const Form = () => {
   }
 
   return (
-    <div className="form-container">
+    <animated.div className="form-container" style={parallaxAnimation}>
       {showConfetti && <ReactConfetti recycle={false} numberOfPieces={200} />}
       <img src={TopLeftLogo} alt="AFS Logo" className="top-left-logo" />
       {!isSubmitted && !showAudioOptions && (
-        <div className="section-progress">
-          {questions.map((section, index) => (
-            <button
-              key={index}
-              onClick={() => {
-                setCurrentSection(index);
-                setCurrentQuestion(0);
-                setShowSectionTitle(true);
-              }}
-              className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
-            >
-              {section.section.split('\n').map((line, i) => (
-                <React.Fragment key={i}>
-                  {line}
-                  {i !== section.section.split('\n').length - 1 && <br />}
-                </React.Fragment>
-              ))}
-            </button>
-          ))}
-        </div>
+        <>
+          <div className="section-progress">
+            {questions.map((section, index) => (
+              <button
+                key={index}
+                onClick={() => {
+                  setCurrentSection(index);
+                  setCurrentQuestion(0);
+                  setShowSectionTitle(true);
+                }}
+                className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
+              >
+                {section.section.split('\n').map((line, i) => (
+                  <React.Fragment key={i}>
+                    {line}
+                    {i !== section.section.split('\n').length - 1 && <br />}
+                  </React.Fragment>
+                ))}
+              </button>
+            ))}
+          </div>
+          {renderProgressAnimation()}
+        </>
       )}
       <div className="form-content">
         {renderContent()}
@@ -444,7 +536,7 @@ const Form = () => {
           )}
         </div>
       )}
-    </div>
+    </animated.div>
   );
 };
 

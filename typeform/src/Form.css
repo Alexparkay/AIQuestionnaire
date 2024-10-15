@@ -1,13 +1,30 @@
-body, html {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+body, html, #root, .App, .form-container, .email-container {
   background-color: #006eb6;
   color: #ffffff;
-  overflow: hidden;
+}
+
+/* Remove any background images, gradients, or animations */
+.form-container {
+  background-image: none;
+  animation: none;
+}
+
+/* Remove the keyframes for gradient shift as it's no longer needed */
+@keyframes gradientShift {
+  0%, 50%, 100% { background-position: 0 0; }
+}
+
+/* Remove any background color transitions */
+.form-container, .email-container {
+  transition: none;
+}
+
+/* Ensure no pseudo-elements are adding any gradients */
+.form-container::before,
+.form-container::after,
+.email-container::before,
+.email-container::after {
+  display: none;
 }
 
 .form-container, .email-container {
@@ -20,7 +37,6 @@ body, html {
   justify-content: flex-start;
   align-items: center;
   position: relative;
-  background-color: #006eb6; /* Ensure background color */
 }
 
 .top-left-logo {
@@ -80,16 +96,18 @@ body, html {
   max-width: 500px;
   margin: 0 auto;
   padding-bottom: 80px; /* Add padding to ensure content doesn't overlap with navigation */
+  position: relative;
+  z-index: 1;
 }
 
 .question-text {
   font-size: 24px;
   font-weight: 600;
   margin-bottom: 20px;
-  color: #ffffff;
   line-height: 1.3;
   text-align: center;
   width: 100%;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .options-container {
@@ -103,19 +121,46 @@ body, html {
   font-size: 16px;
   padding: 15px;
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: all 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
   border: 2px solid rgba(255, 255, 255, 0.3);
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
   text-align: left;
   cursor: pointer;
   width: 100%;
   min-height: 50px;
+  box-shadow: none;
+  color: #ffffff; /* Ensure text color is white */
 }
 
 .option-button.selected {
   background-color: rgba(255, 255, 255, 0.3);
   border-color: #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #ffffff; /* Ensure text color remains white when selected */
+}
+
+.option-button:hover {
+  transform: translateY(-2px);
+}
+
+.option-button:active {
+  transform: translateY(1px);
+}
+
+@keyframes selectPulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.option-button.selected.animate {
+  animation: selectPulse 0.5s ease-in-out;
 }
 
 .text-input, .email-input {
@@ -125,9 +170,9 @@ body, html {
   border-radius: 12px;
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
   box-sizing: border-box;
   margin-bottom: 15px;
+  color: #ffffff; /* Ensure input text is white */
 }
 
 .text-input::placeholder, .email-input::placeholder {
@@ -191,7 +236,6 @@ body, html {
   border-radius: 12px;
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
   margin-top: 15px;
@@ -278,12 +322,6 @@ body, html {
   }
 }
 
-/* Ensure background color consistency */
-#root, .App {
-  background-color: #006eb6;
-  min-height: 100vh;
-}
-
 .audio-options {
   display: flex;
   flex-direction: column;
@@ -349,12 +387,12 @@ body, html {
   border-radius: 6px;
   font-size: 16px;
   background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
   text-align: left;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #ffffff; /* Ensure dropdown text is white */
 }
 
 .dropdown-menu {
@@ -376,11 +414,11 @@ body, html {
   padding: 8px 15px;
   border: none;
   background-color: transparent;
-  color: #ffffff;
   text-align: left;
   cursor: pointer;
   transition: background-color 0.3s ease;
   font-size: 14px;
+  color: #ffffff; /* Ensure dropdown menu text is white */
 }
 
 @keyframes slideDown {
@@ -535,5 +573,60 @@ body, html {
   .navigation-buttons .nav-button.prev {
     width: 40px;
     height: 40px;
+  }
+}
+
+.progress-container {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  margin: 20px 0;
+  overflow: visible;
+}
+
+.world-map-background {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  transform: translateY(-50%);
+  opacity: 0.5;
+  z-index: -1;
+  object-fit: cover;
+  height: 100%;  /* This will stretch the image vertically */
+}
+
+.progress-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.progress-point {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1;
+}
+
+.progress-point.active {
+  background-color: #ffffff;
+}
+
+.progress-line {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawLine 0.5s forwards;
+}
+
+@keyframes drawLine {
+  to {
+    stroke-dashoffset: 0;
   }
 }
