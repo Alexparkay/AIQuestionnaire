@@ -664,34 +664,30 @@ const Form = () => {
         )}
       </div>
       {!isSubmitted && !showAudioOptions && !showSectionTitle && (
-        <>
-          {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 && (
-            <div className="submit-container">
-              <button
-                onClick={handleSubmitClick}
-                className={`submit-button ${allQuestionsAnswered ? 'ready' : 'disabled'}`}
-              >
-                Submit
-              </button>
-            </div>
-          )}
-          <div className="navigation-buttons">
+        <div className={`navigation-buttons ${currentSection === 2 && currentQuestion === 3 ? 'question-10' : ''}`}>
+          <button
+            onClick={prevQuestion}
+            disabled={currentSection === 0 && currentQuestion === 0}
+            className="nav-button prev"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? (
             <button
-              onClick={prevQuestion}
-              disabled={currentSection === 0 && currentQuestion === 0}
-              className="nav-button prev"
+              onClick={handleSubmitClick}
+              className={`submit-button ${allQuestionsAnswered ? 'ready' : 'disabled'}`}
             >
-              <ChevronLeft size={24} />
+              Submit
             </button>
+          ) : (
             <button
               onClick={nextQuestion}
               className="nav-button next"
-              style={{visibility: currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? 'hidden' : 'visible'}}
             >
               <ChevronRight size={24} />
             </button>
-          </div>
-        </>
+          )}
+        </div>
       )}
     </animated.div>
   );
