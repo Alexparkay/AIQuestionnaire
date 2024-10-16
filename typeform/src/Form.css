@@ -269,14 +269,13 @@ body, html, #root, .App, .form-container, .email-container {
 
 .navigation-buttons {
   position: fixed;
-  bottom: auto;
-  top: calc(100% - 180px); /* Moved significantly higher */
+  bottom: 20px; /* Adjust this value as needed */
   left: 20px;
   right: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  z-index: 10; /* Ensure buttons are above other content */
+  z-index: 10;
 }
 
 .nav-button {
@@ -360,7 +359,15 @@ body, html, #root, .App, .form-container, .email-container {
   }
 
   .navigation-buttons {
-    top: calc(100% - 200px); /* Slightly higher for larger screens */
+    bottom: 40px; /* More space on larger screens */
+  }
+
+  .navigation-buttons.question-10 {
+    bottom: 40px; /* Same as regular navigation buttons on larger screens */
+  }
+
+  .form-content {
+    padding-bottom: 100px; /* More space on larger screens */
   }
 }
 
@@ -796,17 +803,32 @@ body, html, #root, .App, .form-container, .email-container {
 
 /* Add this new rule for question 10 */
 .navigation-buttons.question-10 {
-  top: calc(100% - 140px); /* Lowered by 20px */
+  bottom: 20px; /* Same as regular navigation buttons */
 }
 
 /* Update the media query for larger screens */
 @media (min-width: 768px) {
   .navigation-buttons {
-    top: calc(100% - 260px); /* Kept the same */
+    bottom: 40px; /* More space on larger screens */
   }
 
-  /* Update the rule for question 10 on larger screens */
   .navigation-buttons.question-10 {
-    top: calc(100% - 160px); /* Lowered by 20px */
+    bottom: 40px; /* Same as regular navigation buttons on larger screens */
   }
+
+  .form-content {
+    padding-bottom: 100px; /* More space on larger screens */
+  }
+}
+
+/* Ensure buttons don't overlap with content */
+.nav-button, .submit-button, .back-button {
+  margin-top: 10px;
+}
+
+/* Adjust the height of the form container if needed */
+.form-container {
+  min-height: 100vh;
+  padding-bottom: 80px; /* Ensure there's space at the bottom */
+  box-sizing: border-box;
 }
