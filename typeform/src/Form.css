@@ -1,88 +1,103 @@
+/* Add this at the beginning of the file */
+:root {
+  --main-bg-color: #006eb6;
+  --gradient-color-1: #005a94;
+  --gradient-color-2: #0082d8;
+}
+
 body, html, #root, .App, .form-container, .email-container {
-  background-color: #006eb6;
+  height: 100vh;
+  overflow: hidden;
+  background-color: var(--main-bg-color);
   color: #ffffff;
+  position: relative;
 }
 
-/* Remove any background images, gradients, or animations */
-.form-container {
-  background-image: none;
-  animation: none;
-}
-
-/* Remove the keyframes for gradient shift as it's no longer needed */
-@keyframes gradientShift {
-  0%, 50%, 100% { background-position: 0 0; }
-}
-
-/* Remove any background color transitions */
-.form-container, .email-container {
-  transition: none;
-}
-
-/* Ensure no pseudo-elements are adding any gradients */
+/* Add this new rule for the background */
 .form-container::before,
-.form-container::after,
-.email-container::before,
-.email-container::after {
-  display: none;
+.email-container::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  background: 
+    linear-gradient(135deg, 
+      rgba(0, 10, 30, 0.8) 0%, 
+      rgba(0, 30, 80, 0.7) 20%, 
+      rgba(0, 60, 140, 0.6) 40%, 
+      rgba(0, 100, 200, 0.5) 60%, 
+      rgba(50, 150, 255, 0.4) 80%,
+      rgba(100, 200, 255, 0.3) 100%
+    ),
+    url('./worldmap.svg') center/300% no-repeat;
+  background-attachment: fixed;
+  opacity: 0.4;  /* Changed opacity to 0.4 as requested */
+  z-index: -1;
+  animation: subtle-movement 100s infinite alternate;
+}
+
+@keyframes subtle-movement {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(7%);
+  }
 }
 
 .form-container, .email-container {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
-  padding: 60px 20px 20px; /* Adjusted padding */
+  padding: 15px;
   box-sizing: border-box;
-  justify-content: flex-start;
+  justify-content: center;
   align-items: center;
   position: relative;
+  z-index: 1;
+  background-color: rgba(0, 110, 182, 0.2); /* Reduce the opacity of the container background */
 }
 
 .top-left-logo {
   position: absolute;
   top: 15px;
   left: 15px;
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
 }
 
 .section-progress {
   display: flex;
   justify-content: space-between;
   background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
-  padding: 8px 12px;
+  border-radius: 10px;
+  padding: 6px 8px;
   position: absolute;
   top: 15px;
-  left: 60px;
-  right: 15px;
-  height: 40px;
+  left: 65px;
+  right: 10px;
+  height: 34px;
 }
 
 .section-progress-item {
   flex: 1;
-  padding: 0 6px;
-  text-align: center;
-  font-size: 14px;
-  border-radius: 16px;
-  transition: all 0.3s ease;
-  background: none;
-  border: none;
-  color: #ffffff;
+  font-size: 8px;
+  padding: 3px;
+  border-radius: 8px;
   opacity: 0.7;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: opacity 0.3s ease;
+}
+
+.section-progress-item:hover {
+  opacity: 1;
 }
 
 .section-progress-item.active {
   opacity: 1;
-  font-weight: bold;
   background-color: rgba(255, 255, 255, 0.2);
 }
 
@@ -93,61 +108,129 @@ body, html, #root, .App, .form-container, .email-container {
   justify-content: center;
   align-items: center;
   width: 100%;
-  max-width: 500px;
+  max-width: none;
   margin: 0 auto;
-  padding-bottom: 80px; /* Add padding to ensure content doesn't overlap with navigation */
-  position: relative;
-  z-index: 1;
+  padding: 0 10px 20px;
+  box-sizing: border-box;
 }
 
 .question-text {
-  font-size: 24px;
-  font-weight: 600;
+  font-size: 20px;
   margin-bottom: 20px;
-  line-height: 1.3;
   text-align: center;
-  width: 100%;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-weight: bold;
+  line-height: 1.3;
 }
 
 .options-container {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 12px;
   width: 100%;
+  max-width: 400px;
 }
 
 .option-button {
   font-size: 16px;
   padding: 15px;
   border-radius: 12px;
-  transition: all 0.3s ease, transform 0.1s ease, box-shadow 0.3s ease;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  background-color: rgba(255, 255, 255, 0.1);
+  min-height: 50px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   text-align: left;
   cursor: pointer;
   width: 100%;
-  min-height: 50px;
-  box-shadow: none;
-  color: #ffffff; /* Ensure text color is white */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .option-button.selected {
   background-color: rgba(255, 255, 255, 0.3);
   border-color: #ffffff;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  color: #ffffff; /* Ensure text color remains white when selected */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+  animation: selectAnimation 0.5s ease;
 }
 
-.option-button:hover {
+@keyframes selectAnimation {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+  100% {
+    transform: translateY(-2px);
+  }
+}
+
+.text-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.text-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.nav-button, .submit-button {
+  padding: 12px;
+  min-width: 45px;
+  min-height: 45px;
+  font-size: 16px;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover, .submit-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.submit-button, .email-submit-button {
+  border-radius: 10px;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #ffffff;
+  font-weight: bold;
+  width: 100%;
+  margin-top: 15px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.2);
   transform: translateY(-2px);
 }
 
-.option-button:active {
-  transform: translateY(1px);
+.submit-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-@keyframes selectPulse {
+.submit-button.ready {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
   0% {
     transform: scale(1);
   }
@@ -159,87 +242,131 @@ body, html, #root, .App, .form-container, .email-container {
   }
 }
 
-.option-button.selected.animate {
-  animation: selectPulse 0.5s ease-in-out;
-}
-
-.text-input, .email-input {
+.progress-container {
+  position: relative;
   width: 100%;
-  padding: 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 12px;
-  font-size: 16px;
-  background-color: rgba(255, 255, 255, 0.1);
-  box-sizing: border-box;
-  margin-bottom: 15px;
-  color: #ffffff; /* Ensure input text is white */
+  height: 60px;
+  margin: 10px 0 20px;
+  overflow: visible;
 }
 
-.text-input::placeholder, .email-input::placeholder {
-  color: rgba(255, 255, 255, 0.5); /* Lighter grey for placeholder text */
+.world-map-background {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: auto;
+  height: 150%;
+  transform: translate(-50%, -50%);
+  opacity: 0.1;
+  z-index: -1;
+  object-fit: cover;
+}
+
+.progress-point {
+  width: 12px;
+  height: 12px;
 }
 
 .navigation-buttons {
-  position: fixed;
+  position: absolute;
   bottom: 20px;
   left: 20px;
   right: 20px;
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Add this line to vertically align items */
-  z-index: 1000;
 }
 
-.nav-button, .submit-button {
+.nav-button {
   background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  padding: 12px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  min-width: 44px;
-  min-height: 44px;
   border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
   cursor: pointer;
-  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.nav-button:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.submit-container {
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+  position: absolute;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .submit-button {
-  padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.3);
-  font-weight: bold;
-  border-radius: 50px;
-  min-width: auto;
-  min-height: auto;
-}
-
-.nav-button:hover, .submit-button:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.4);
-}
-
-.nav-button:disabled, .submit-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.submit-button svg {
-  margin-left: 8px;
-}
-
-.email-submit-button {
   width: 100%;
   padding: 15px;
-  border: none;
   border-radius: 12px;
   font-size: 16px;
+  font-weight: bold;
   background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: 15px;
 }
+
+.submit-button:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.submit-button.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.submit-button.ready {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.unanswered-warning {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Adjust media query for larger screens */
+@media (min-width: 768px) {
+  .form-content {
+    max-width: 600px;
+  }
+
+  .question-text {
+    font-size: 24px;
+  }
+
+  .option-button, .text-input {
+    font-size: 18px;
+  }
+}
+
+/* Add these styles to your existing Form.css file */
 
 .section-title {
   text-align: center;
@@ -262,88 +389,86 @@ body, html, #root, .App, .form-container, .email-container {
   margin-top: 20px;
 }
 
-@media (min-width: 768px) {
-  .question-text {
-    font-size: 28px;
-  }
-
-  .option-button, .text-input, .email-input, .email-submit-button {
-    font-size: 18px;
-  }
+.email-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
 }
 
-@media (max-width: 480px) {
-  .form-container, .email-container {
-    padding: 70px 15px 70px;
-  }
-
-  .section-progress {
-    height: 36px;
-  }
-
-  .section-progress-item {
-    font-size: 11px;
-    padding: 0 4px;
-  }
-
-  .question-text {
-    font-size: 20px;
-  }
-
-  .option-button, .text-input, .email-input, .email-submit-button {
-    font-size: 14px;
-    padding: 12px;
-  }
-
-  .nav-button, .submit-button {
-    padding: 10px;
-    font-size: 14px;
-    min-width: 40px;
-    min-height: 40px;
-  }
-
-  .submit-button {
-    padding: 10px 20px;
-  }
-
-  .navigation-buttons {
-    bottom: 20px;
-  }
+.email-content {
+  width: 100%;
+  max-width: 350px;
+  text-align: center;
 }
 
-/* Add a new media query for devices with navigation bars */
-@media (max-height: 700px) {
-  .form-container, .email-container {
-    padding-bottom: 100px; /* Further increase bottom padding */
-  }
+.email-input {
+  width: 100%;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  font-size: 18px;
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
 
-  .navigation-buttons {
-    bottom: 80px; /* Raise the buttons even higher */
-  }
+.email-input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.email-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.email-submit-button {
+  width: 100%;
+  padding: 15px;
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.email-submit-button:hover {
+  background-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.unanswered-warning {
+  color: #ff6b6b;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
+  max-width: 400px;
 }
 
 .audio-options {
+  width: 100%;
+  max-width: 600px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  margin-top: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: 450px;
-  margin: 0 auto;
-  padding: 20px;
-  box-sizing: border-box;
 }
 
 .audio-options h2 {
   font-size: 24px;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
   text-align: center;
-}
-
-.audio-options p {
-  font-size: 16px;
-  margin-bottom: 25px;
-  text-align: center;
-  color: rgba(255, 255, 255, 0.8);
 }
 
 .option-group {
@@ -353,132 +478,61 @@ body, html, #root, .App, .form-container, .email-container {
 
 .option-group h3 {
   font-size: 18px;
-  margin-bottom: 8px;
-  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 10px;
 }
 
-.return-button, .submit-button {
-  width: 100%;
-  max-width: 250px;
-  margin: 8px 0;
-  padding: 10px 15px;
-  font-size: 16px;
-  border-radius: 6px;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.return-button:hover, .submit-button:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-.dropdown {
-  position: relative;
-  width: 100%;
-}
-
-.dropdown-toggle {
-  width: 100%;
-  padding: 10px 15px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  font-size: 16px;
-  background-color: rgba(255, 255, 255, 0.1);
-  text-align: left;
-  cursor: pointer;
+.audio-option-buttons {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  color: #ffffff; /* Ensure dropdown text is white */
-}
-
-.dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  background-color: #006eb6;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 6px;
-  max-height: 160px;
-  overflow-y: auto;
-  z-index: 1000;
-  animation: slideDown 0.3s ease-out;
-}
-
-.dropdown-menu button {
+  flex-wrap: wrap;
+  gap: 10px;
   width: 100%;
-  padding: 8px 15px;
-  border: none;
-  background-color: transparent;
-  text-align: left;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+}
+
+.audio-option {
+  flex: 1 0 calc(50% - 5px);
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  color: #ffffff;
   font-size: 14px;
-  color: #ffffff; /* Ensure dropdown menu text is white */
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.dropdown-menu button:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-}
-
-.return-button {
-  width: 100%;
-  max-width: 300px;
-  margin: 10px 0;
-  padding: 12px 20px;
-  font-size: 16px;
-  border-radius: 12px;
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
   cursor: pointer;
   transition: all 0.3s ease;
 }
 
-.return-button:hover {
+.audio-option:hover {
+  background-color: rgba(255, 255, 255, 0.25);
+}
+
+.audio-option.selected {
   background-color: rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
+  font-weight: bold;
 }
 
 .submit-button {
   width: 100%;
-  max-width: 300px;
-  margin: 10px 0;
-  padding: 12px 20px;
-  font-size: 16px;
-  border-radius: 12px;
+  max-width: none;
+  margin-top: 20px;
+  margin-bottom: 10px;
 }
 
-/* Custom scrollbar styles */
-.dropdown-menu::-webkit-scrollbar {
-  width: 8px;
-}
-
-.dropdown-menu::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.1);
+.back-button {
+  width: 100%;
+  max-width: none;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.dropdown-menu::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 10px;
-}
-
-.dropdown-menu::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
+.back-button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
 }
 
 .thank-you-message {
@@ -491,142 +545,293 @@ body, html, #root, .App, .form-container, .email-container {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.thank-you-graphic {
+  width: 200px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
 .thank-you-message h2 {
-  font-size: 32px;
+  font-size: 28px;
   margin-bottom: 20px;
   color: #ffffff;
 }
 
 .thank-you-message p {
-  font-size: 18px;
-  color: #ffffff;
+  font-size: 16px;
   margin-bottom: 15px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
 .thank-you-message ul {
   list-style-type: none;
   padding: 0;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .thank-you-message li {
   font-size: 16px;
-  color: #ffffff;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-@media (max-width: 480px) {
-  .audio-options h2 {
-    font-size: 20px;
-  }
+.generation-animation {
+  margin-top: 30px;
+}
 
-  .audio-options p {
-    font-size: 14px;
-  }
+.clock-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 10px;
+  animation: pulse 2s infinite;
+}
 
-  .option-group h3 {
-    font-size: 16px;
+@keyframes pulse {
+  0% {
+    transform: scale(1);
   }
-
-  .return-button, .submit-button, .dropdown-toggle {
-    padding: 8px 12px;
-    font-size: 14px;
+  50% {
+    transform: scale(1.1);
   }
-
-  .dropdown-menu button {
-    padding: 6px 12px;
-    font-size: 12px;
-  }
-
-  .navigation-buttons .submit-button {
-    padding: 8px 16px;
-    font-size: 14px;
+  100% {
+    transform: scale(1);
   }
 }
 
-/* Adjust the submit button on the last question */
-.navigation-buttons .submit-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  min-width: auto;
-  min-height: auto;
-  border-radius: 50px;
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
-/* Make the back arrow a perfect circle on all questions, including the last one */
-.navigation-buttons .nav-button.prev {
-  background-color: rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 50%;
-  width: 44px;
-  height: 44px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (max-width: 480px) {
-  /* ... (other mobile styles remain unchanged) */
-
-  .navigation-buttons .nav-button.prev {
-    width: 40px;
-    height: 40px;
-  }
-}
-
-.progress-container {
+/* Add these styles for the circular countdown timer */
+.countdown-timer {
   position: relative;
-  width: 100%;
-  height: 60px;
-  margin: 20px 0;
-  overflow: visible;
+  width: 200px;
+  height: 200px;
+  margin: 40px auto;
+  animation: timerPulse 2s infinite alternate;
 }
 
-.world-map-background {
+@keyframes timerPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.05); }
+}
+
+.countdown-timer svg {
+  transform: rotate(-90deg);
+}
+
+.countdown-timer circle {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 16;
+}
+
+.countdown-timer .progress {
+  stroke: white;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-content {
   position: absolute;
   top: 50%;
-  left: 0;
-  width: 100%;
-  transform: translateY(-50%);
-  opacity: 0.5;
-  z-index: -1;
-  object-fit: cover;
-  height: 100%;  /* This will stretch the image vertically */
-}
-
-.progress-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
   width: 100%;
   height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.progress-point {
+.countdown-timer .text {
+  font-size: 64px;
+  font-weight: bold;
+  color: white;
+  animation: textPulse 1s infinite alternate;
+}
+
+@keyframes textPulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
+}
+
+/* Add this to your existing styles */
+.option-description {
+  color: rgba(255, 255, 255, 0.7);  /* This makes the text slightly grayed out */
+}
+
+/* Add this new rule to make the text larger */
+.email-content h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+
+/* Update the email input and submit button to match the larger text */
+.email-input,
+.email-submit-button {
+  font-size: 18px;
+  padding: 15px;
+}
+
+/* Add these styles at the end of your Form.css file */
+
+/* Toast notification styles */
+.Toastify__toast-container {
+  width: 320px;
+}
+
+.Toastify__toast {
+  background-color: rgba(0, 110, 182, 0.9);
+  color: #ffffff;
+  font-size: 16px;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.Toastify__toast--error {
+  background-color: rgba(255, 107, 107, 0.9);
+}
+
+.Toastify__close-button {
+  color: #ffffff;
+}
+
+.Toastify__progress-bar {
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.generation-animation {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.generation-animation h2 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.generation-animation p {
+  font-size: 20px;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.countdown-timer {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin: 40px auto;
+}
+
+.countdown-timer svg {
+  transform: rotate(-90deg);
+}
+
+.countdown-timer circle {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 16;
+}
+
+.countdown-timer .progress {
+  stroke: white;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1s linear;
+}
+
+.timer-content {
   position: absolute;
+  top: 50%;
+  left: 50%;
   transform: translate(-50%, -50%);
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
-  transition: all 0.3s ease;
-  z-index: 1;
+  text-align: center;
 }
 
-.progress-point.active {
-  background-color: #ffffff;
+.countdown-timer .text {
+  font-size: 48px;
+  font-weight: bold;
+  color: white;
+  animation: pulse 1s infinite alternate;
 }
 
-.progress-line {
-  stroke-dasharray: 1000;
-  stroke-dashoffset: 1000;
-  animation: drawLine 0.5s forwards;
+@keyframes pulse {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.1); }
 }
 
-@keyframes drawLine {
-  to {
-    stroke-dashoffset: 0;
-  }
+.fun-facts {
+  margin-top: 40px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+}
+
+.thank-you-message {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 60px 40px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.thank-you-icon {
+  margin-bottom: 30px;
+  animation: sparkle 3s infinite;
+}
+
+@keyframes sparkle {
+  0%, 100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  50% { transform: scale(1.2) rotate(180deg); opacity: 0.8; }
+}
+
+.thank-you-message h2 {
+  font-size: 36px;
+  margin-bottom: 20px;
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.thank-you-message p {
+  font-size: 20px;
+  margin-bottom: 20px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.audio-details {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin: 40px 0;
+}
+
+.audio-detail {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.email-sent {
+  font-size: 18px;
+  margin-top: 30px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.enjoy-message {
+  font-size: 24px;
+  margin-top: 40px;
+  color: #ffffff;
+  font-weight: bold;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

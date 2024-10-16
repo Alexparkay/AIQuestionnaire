@@ -1,74 +1,125 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Music, Headphones, Sparkles } from 'lucide-react';
 import ReactConfetti from 'react-confetti';
 import { useSpring, animated, useTrail } from 'react-spring';
 import './Form.css';
 import TopLeftLogo from './Top_left_logo.svg';
-import WorldMap from './worldmap.svg';  // Make sure this import is correct
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const questions = [
   {
-    section: "Opportunities\nof AI",
+    section: "AI Adoption\nand Preparation",
     questions: [
       {
-        question: "How can AI best support AFS's mission?",
+        question: "How well prepared is AFS for AI adoption?",
         type: "multiple",
-        options: ["Facilitate cross-language communication", "Personalize global learning", "Create new online connections", "Reach underserved communities"]
+        options: [
+          "Fully prepared – AFS has a solid foundation to integrate AI.",
+          "Moderately prepared – Some steps have been taken, but more is needed.",
+          "Somewhat prepared – AFS is starting, but there are significant gaps.",
+          "Not prepared – AFS needs to begin preparing for AI adoption."
+        ]
       },
       {
-        question: "How can AI help AFS engage diverse communities?",
+        question: "What does AFS need to work hardest on to be able to adopt AI?",
         type: "multiple",
-        options: ["Increase access to global education", "Remove language and time barriers", "Enable real-time global connections", "Expand to hard-to-reach areas"]
+        options: [
+          "Building the technical infrastructure for AI.",
+          "Training staff and volunteers on AI usage.",
+          "Aligning AI with AFS's values and mission.",
+          "Securing funding and partnerships for AI development."
+        ]
       },
       {
-        question: "What role should AI play in AFS's social impact?",
+        question: "In which area do you think AI can support AFS best?",
         type: "multiple",
-        options: ["Enhance existing programs", "Launch diversity initiatives", "Foster intercultural understanding", "Empower self-directed learning"]
+        options: [
+          "Enhancing global education programs.",
+          "Improving intercultural communication and exchange.",
+          "Streamlining internal operations and efficiency.",
+          "Expanding AFS's global outreach and impact."
+        ]
       }
     ]
   },
   {
-    section: "Responsibilities\nof AI",
+    section: "AI and AFS\nMission",
     questions: [
       {
-        question: "Which AI ethics area should AFS prioritize?",
+        question: "Can AI support AFS's mission in Creating Global Citizens?",
         type: "multiple",
-        options: ["Fairness and inclusion", "Transparency", "Human oversight", "Balancing innovation and ethics"]
+        options: [
+          "Yes, AI can play a key role in developing global citizens.",
+          "Yes, but only if AI is used carefully and ethically.",
+          "AI might help, but it's not essential to this mission.",
+          "No, AI does not align with the mission of creating global citizens."
+        ]
       },
       {
-        question: "How crucial is aligning AI with AFS values?",
+        question: "What is your greatest concern in incorporating AI to AFS today?",
         type: "multiple",
-        options: ["Always essential", "Important, but flexible", "Not always necessary", "Balance ethics and innovation"]
+        options: [
+          "Potential ethical issues or biases in AI systems.",
+          "Lack of resources or funding to implement AI effectively.",
+          "AI replacing the human-centered aspects of AFS programs.",
+          "Data privacy and security challenges."
+        ]
       },
       {
-        question: "How should AFS handle AI data governance?",
+        question: "What is AFS's greatest challenge in integrating AI?",
         type: "multiple",
-        options: ["Be transparent about data use", "Prioritize privacy", "Follow global AI standards", "Update policies for ethical compliance"]
+        options: [
+          "Keeping AI aligned with AFS's values of inclusion and diversity.",
+          "Ensuring the right technology and tools are in place.",
+          "Convincing stakeholders and gaining buy-in for AI initiatives.",
+          "Balancing innovation with ethical and legal considerations."
+        ]
       }
     ]
   },
   {
-    section: "AI in\nAction",
+    section: "Future of AI\nin AFS",
     questions: [
       {
-        question: "What's the best AI strategy for AFS?",
+        question: "To what extent do you agree with AFS incorporating AI as a permanent tool?",
         type: "multiple",
-        options: ["Launch global citizenship AI projects", "Improve internal processes", "Partner with AI innovators", "Expand global reach"]
+        options: [
+          "Strongly agree – AI should be a key part of AFS's future.",
+          "Agree – AI should be used, but with limitations.",
+          "Neutral – AI could be helpful but isn't a priority.",
+          "Disagree – AI shouldn't play a big role at AFS."
+        ]
       },
       {
-        question: "How can AFS pilot impactful AI projects?",
+        question: "Do you have any recommendations for AFS as it moves forward with AI?",
         type: "multiple",
-        options: ["Start small, high-impact initiatives", "Collaborate on AI testing", "Use AI to grow programs", "Focus on scalable solutions"]
+        options: [
+          "Yes, focus on using AI to enhance education and learning.",
+          "Yes, prioritize ethical considerations and human oversight.",
+          "Yes, invest in training and development for staff.",
+          "No, AFS should be cautious and move slowly with AI integration."
+        ]
       },
       {
-        question: "How can AI support AFS's internal growth?",
+        question: "What kind of AI projects should AFS prioritize first?",
         type: "multiple",
-        options: ["Automate tasks for staff focus", "Improve data-driven decisions", "Enhance global communication", "Streamline operations"]
+        options: [
+          "Educational tools (e.g., personalized learning).",
+          "Cultural exchange support (e.g., language translation).",
+          "Operational efficiency (e.g., automating administrative tasks).",
+          "Expanding global impact through outreach."
+        ]
       },
       {
-        question: "How important is AI to AFS's future?",
+        question: "What's the most exciting opportunity AI could bring to AFS?",
         type: "multiple",
-        options: ["Essential (100%)", "Very important (75%)", "Somewhat important (50%)", "Not very important (25%)"]
+        options: [
+          "Reaching more diverse communities.",
+          "Improving the quality of global education programs.",
+          "Making intercultural exchange easier and faster.",
+          "Creating more personalized, engaging experiences for learners."
+        ]
       }
     ]
   }
@@ -94,6 +145,11 @@ const Form = () => {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [progressPoints, setProgressPoints] = useState([]);
   const [completedLines, setCompletedLines] = useState([]);
+  const [unansweredQuestions, setUnansweredQuestions] = useState([]);
+  const [showUnansweredWarning, setShowUnansweredWarning] = useState(false);
+  const [generationTimer, setGenerationTimer] = useState(0);
+  const [countdown, setCountdown] = useState(null);
+  const [showThankYou, setShowThankYou] = useState(false);
 
   const totalQuestions = questions.reduce((total, section) => total + section.questions.length, 0);
   const currentQuestionNumber = questions.slice(0, currentSection).reduce((total, section) => total + section.questions.length, 0) + currentQuestion + 1;
@@ -140,15 +196,18 @@ const Form = () => {
   }, [name, email, answers, currentSection, currentQuestion, showSurvey]);
 
   useEffect(() => {
-    const totalQuestions = questions.reduce((total, section) => total + section.questions.length, 0);
-    const answeredQuestions = Object.keys(answers).length;
-    setAllQuestionsAnswered(answeredQuestions === totalQuestions);
+    const unanswered = [];
+    questions.forEach((section, sectionIndex) => {
+      section.questions.forEach((question, questionIndex) => {
+        const questionNumber = questions.slice(0, sectionIndex).reduce((total, s) => total + s.questions.length, 0) + questionIndex + 1;
+        if (!answers[`${sectionIndex}-${questionIndex}`]) {
+          unanswered.push(questionNumber);
+        }
+      });
+    });
+    setUnansweredQuestions(unanswered);
+    setAllQuestionsAnswered(unanswered.length === 0);
   }, [answers]);
-
-  useEffect(() => {
-    // Generate random points once when the component mounts
-    setProgressPoints(generateRandomPoints(totalQuestions));
-  }, []);
 
   useEffect(() => {
     if (currentQuestionNumber > 1) {
@@ -177,7 +236,7 @@ const Form = () => {
     if (questions[currentSection].questions[currentQuestion].type === 'multiple' && !isLastQuestion) {
       setTimeout(() => {
         nextQuestion();
-      }, 500); // Changed from 1000 to 500 milliseconds
+      }, 500);
     }
   };
 
@@ -219,9 +278,15 @@ const Form = () => {
   };
 
   const submitAudioPreferences = () => {
-    // Immediately show the thank you page and confetti
     setShowConfetti(true);
     setIsSubmitted(true);
+
+    // Set the countdown based on the selected audio duration
+    if (audioDuration.includes('2 minutes')) {
+      setCountdown(60); // 60 seconds for 2-minute audio
+    } else if (audioDuration.includes('30 seconds')) {
+      setCountdown(15); // 15 seconds for 30-second audio
+    }
 
     const surveyData = {
       name,
@@ -240,7 +305,6 @@ const Form = () => {
 
     const webhookUrl = 'https://ai-podcast-603006204318.europe-west2.run.app/webhook';
 
-    // Send data to the webhook after showing the thank you page
     fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -253,7 +317,6 @@ const Form = () => {
     })
     .catch((error) => {
       console.error('Error:', error);
-      // You might want to show an error message to the user here
     });
   };
 
@@ -261,66 +324,32 @@ const Form = () => {
     return (
       <div className="audio-options">
         <h2>Customize Your Audio Response</h2>
-        <p>Based on your answers, we will craft an audio response addressing your concerns and questions.</p>
-        
         <div className="option-group">
           <h3>Select audio duration:</h3>
-          <div className="dropdown">
-            <button 
-              className="dropdown-toggle"
-              onClick={() => setShowDurationDropdown(!showDurationDropdown)}
-            >
-              {audioDuration ? `${audioDuration}` : 'Select duration'}
-              <ChevronDown size={20} />
+          <div className="audio-option-buttons">
+            <button onClick={() => setAudioDuration('30 seconds - AI Espresso Shot')} className={`audio-option ${audioDuration === '30 seconds - AI Espresso Shot' ? 'selected' : ''}`}>
+              30 seconds - AI Espresso Shot
             </button>
-            {showDurationDropdown && (
-              <div className="dropdown-menu">
-                <button onClick={() => { setAudioDuration('30 seconds - AI Espresso Shot'); setShowDurationDropdown(false); }}>
-                  30 seconds - AI Espresso Shot
-                </button>
-                <button onClick={() => { setAudioDuration('2 minutes - AI Deep Dive'); setShowDurationDropdown(false); }}>
-                  2 minutes - AI Deep Dive
-                </button>
-              </div>
-            )}
+            <button onClick={() => setAudioDuration('2 minutes - AI Deep Dive')} className={`audio-option ${audioDuration === '2 minutes - AI Deep Dive' ? 'selected' : ''}`}>
+              2 minutes - AI Deep Dive
+            </button>
           </div>
         </div>
 
         <div className="option-group">
           <h3>Select audio language:</h3>
-          <div className="dropdown">
-            <button 
-              className="dropdown-toggle"
-              onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-            >
-              {audioLanguage || 'Select language'}
-              <ChevronDown size={20} />
-            </button>
-            {showLanguageDropdown && (
-              <div className="dropdown-menu">
-                {['English', 'Spanish', 'French', 'Russian', 'Turkish', 'Arabic', 'Hindi', 'Mandarin'].map((language) => (
-                  <button 
-                    key={language}
-                    onClick={() => { setAudioLanguage(language); setShowLanguageDropdown(false); }}
-                  >
-                    {language}
-                  </button>
-                ))}
-              </div>
-            )}
+          <div className="audio-option-buttons">
+            {['English', 'Spanish', 'French', 'Russian', 'Turkish', 'Arabic', 'Hindi', 'Mandarin'].map((language) => (
+              <button 
+                key={language}
+                onClick={() => setAudioLanguage(language)}
+                className={`audio-option ${audioLanguage === language ? 'selected' : ''}`}
+              >
+                {language}
+              </button>
+            ))}
           </div>
         </div>
-
-        <button 
-          className="return-button"
-          onClick={() => {
-            setShowAudioOptions(false);
-            setCurrentSection(questions.length - 1);
-            setCurrentQuestion(questions[questions.length - 1].questions.length - 1);
-          }}
-        >
-          Return to Questions
-        </button>
 
         <button 
           className="submit-button"
@@ -329,75 +358,128 @@ const Form = () => {
         >
           Generate {audioDuration ? audioDuration.split(' - ')[0] : ''} Audio
         </button>
+
+        <button 
+          className="back-button"
+          onClick={() => setShowAudioOptions(false)}
+        >
+          Back to Questions
+        </button>
       </div>
     );
   };
 
-  const renderProgressAnimation = () => (
-    <div className="progress-container">
-      <img src={WorldMap} alt="World Map" className="world-map-background" />
-      <svg className="progress-svg" viewBox="0 0 1000 100" preserveAspectRatio="none">
-        {completedLines.map((lineIndex) => {
-          const startPoint = progressPoints[lineIndex - 1];
-          const endPoint = progressPoints[lineIndex];
-          return (
-            <line
-              key={lineIndex}
-              x1={`${startPoint.x}%`}
-              y1={`${startPoint.y}%`}
-              x2={`${endPoint.x}%`}
-              y2={`${endPoint.y}%`}
-              stroke="#ffffff"
-              strokeWidth="2"
-              className="progress-line"
-            />
-          );
-        })}
-      </svg>
-      {progressPoints.map((point, index) => (
-        <div
-          key={index}
-          className={`progress-point ${index < currentQuestionNumber ? 'active' : ''}`}
-          style={{ 
-            left: `${point.x}%`, 
-            top: `${point.y}%`,
-            opacity: index < currentQuestionNumber ? 1 : 0
-          }}
-        />
-      ))}
-    </div>
-  );
-
-  const generateRandomPoints = (count) => {
-    const points = [];
-    for (let i = 0; i < count; i++) {
-      points.push({
-        x: (i / (count - 1)) * 100,
-        y: 30 + Math.random() * 40 // Random y position between 30% and 70%
+  const handleSubmitClick = () => {
+    if (allQuestionsAnswered) {
+      submitSurvey();
+    } else {
+      const unansweredMessage = `Please answer ${unansweredQuestions.length > 1 ? 'questions' : 'question'} ${unansweredQuestions.join(', ')} before submitting.`;
+      toast.error(unansweredMessage, {
+        position: "top-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        className: 'custom-toast',
+        bodyClassName: 'custom-toast-body',
+        progressClassName: 'custom-toast-progress',
       });
     }
-    return points;
   };
 
   const renderContent = () => {
-    if (isSubmitted) {
+    if (showThankYou) {
       return (
         <div className="thank-you-message">
+          <Sparkles className="thank-you-icon" size={64} />
           <h2>Thank you, {name}!</h2>
-          <p>Your questionnaire has been successfully submitted.</p>
-          <p>We appreciate your time and valuable input.</p>
-          <p>An audio response addressing your concerns and questions will be crafted based on your preferences:</p>
-          <ul>
-            <li>Duration: {audioDuration}</li>
-            <li>Language: {audioLanguage}</li>
-          </ul>
-          <p>We'll send it to your email: {email}</p>
+          <p>Your personalized AI insights are ready!</p>
+          <div className="audio-details">
+            <div className="audio-detail">
+              <Music size={24} />
+              <span>Duration: {audioDuration}</span>
+            </div>
+            <div className="audio-detail">
+              <Headphones size={24} />
+              <span>Language: {audioLanguage}</span>
+            </div>
+          </div>
+          <p className="email-sent">We've sent your audio response to: <strong>{email}</strong></p>
+          <p className="enjoy-message">Enjoy your AI-powered insights!</p>
+        </div>
+      );
+    }
+
+    if (isSubmitted && countdown !== null) {
+      return (
+        <div className="generation-animation">
+          <h2>Crafting Your AI-Powered Insights!</h2>
+          <p>Hang tight while we whip up some audio magic just for you!</p>
+          <div className="countdown-timer">
+            <svg width="200" height="200">
+              <circle cx="100" cy="100" r="90" />
+              <circle
+                cx="100"
+                cy="100"
+                r="90"
+                strokeDasharray="565.48"
+                strokeDashoffset={`${565.48 - (565.48 * countdown) / (audioDuration.includes('2 minutes') ? 60 : 15)}`}
+                className="progress"
+              />
+            </svg>
+            <div className="timer-content">
+              <div className="text">{countdown}</div>
+            </div>
+          </div>
+          <div className="fun-facts">
+            <p>Did you know? An AI can analyze years of data in seconds!</p>
+          </div>
         </div>
       );
     }
 
     if (showAudioOptions) {
-      return renderAudioOptions();
+      return (
+        <div className="audio-options">
+          <h2>Customize Your Audio Response</h2>
+          <div className="option-group">
+            <h3>Select audio duration:</h3>
+            <div className="audio-option-buttons">
+              <button onClick={() => setAudioDuration('30 seconds - AI Espresso Shot')} className={`audio-option ${audioDuration === '30 seconds - AI Espresso Shot' ? 'selected' : ''}`}>
+                30 seconds - AI Espresso Shot
+              </button>
+              <button onClick={() => setAudioDuration('2 minutes - AI Deep Dive')} className={`audio-option ${audioDuration === '2 minutes - AI Deep Dive' ? 'selected' : ''}`}>
+                2 minutes - AI Deep Dive
+              </button>
+            </div>
+          </div>
+
+          <div className="option-group">
+            <h3>Select audio language:</h3>
+            <div className="audio-option-buttons">
+              {['English', 'Spanish', 'French', 'Russian', 'Turkish', 'Arabic', 'Hindi', 'Mandarin'].map((language) => (
+                <button 
+                  key={language}
+                  onClick={() => setAudioLanguage(language)}
+                  className={`audio-option ${audioLanguage === language ? 'selected' : ''}`}
+                >
+                  {language}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button 
+            className="submit-button"
+            onClick={submitAudioPreferences}
+            disabled={!audioDuration || !audioLanguage}
+          >
+            Generate {audioDuration ? audioDuration.split(' - ')[0] : ''} Audio
+          </button>
+        </div>
+      );
     }
 
     if (showSectionTitle) {
@@ -425,9 +507,33 @@ const Form = () => {
               <button
                 key={index}
                 onClick={() => handleAnswer(option)}
-                className={`option-button ${savedAnswer === option ? 'selected' : ''} ${selectedAnswer === option ? 'animate' : ''}`}
+                className={`option-button ${savedAnswer === option ? 'selected' : ''}`}
               >
-                {option}
+                {questionNumber === 9 ? (
+                  option === "Expanding global impact through outreach." ? (
+                    option
+                  ) : (
+                    <>
+                      {option.split('(')[0]}
+                      <span className="option-description">({option.split('(')[1]}</span>
+                    </>
+                  )
+                ) : questionNumber === 10 ? (
+                  option
+                ) : option.includes(' – ') ? (
+                  <>
+                    <strong>{option.split(' – ')[0]}</strong>
+                    {' – '}
+                    <span className="option-description">{option.split(' – ')[1]}</span>
+                  </>
+                ) : option.includes(',') ? (
+                  <>
+                    <strong>{option.split(',')[0]}</strong>
+                    <span className="option-description">{', ' + option.split(',').slice(1).join(',')}</span>
+                  </>
+                ) : (
+                  option
+                )}
               </button>
             ))}
           </div>
@@ -444,6 +550,39 @@ const Form = () => {
       </animated.div>
     );
   };
+
+  const handleSectionClick = (index) => {
+    setCurrentSection(index);
+    setCurrentQuestion(0);
+    setShowSectionTitle(true);
+  };
+
+  const handleContinue = () => {
+    setShowSectionTitle(false);
+  };
+
+  useEffect(() => {
+    let interval;
+    if (isSubmitted && audioDuration.includes('2 minutes') && generationTimer < 60) {
+      interval = setInterval(() => {
+        setGenerationTimer(prevTimer => prevTimer + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [isSubmitted, audioDuration, generationTimer]);
+
+  useEffect(() => {
+    let interval;
+    if (countdown !== null && countdown > 0) {
+      interval = setInterval(() => {
+        setCountdown(prevCountdown => prevCountdown - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setShowThankYou(true);
+      setShowConfetti(true);
+    }
+    return () => clearInterval(interval);
+  }, [countdown]);
 
   if (!showSurvey) {
     return (
@@ -479,6 +618,17 @@ const Form = () => {
 
   return (
     <animated.div className="form-container" style={parallaxAnimation}>
+      <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       {showConfetti && <ReactConfetti recycle={false} numberOfPieces={200} />}
       <img src={TopLeftLogo} alt="AFS Logo" className="top-left-logo" />
       {!isSubmitted && !showAudioOptions && (
@@ -487,11 +637,7 @@ const Form = () => {
             {questions.map((section, index) => (
               <button
                 key={index}
-                onClick={() => {
-                  setCurrentSection(index);
-                  setCurrentQuestion(0);
-                  setShowSectionTitle(true);
-                }}
+                onClick={() => handleSectionClick(index)}
                 className={`section-progress-item ${currentSection === index ? 'active' : ''}`}
               >
                 {section.section.split('\n').map((line, i) => (
@@ -503,38 +649,49 @@ const Form = () => {
               </button>
             ))}
           </div>
-          {renderProgressAnimation()}
+          {/* Comment out the progress animation */}
+          {/*renderProgressAnimation()*/}
         </>
       )}
       <div className="form-content">
-        {renderContent()}
+        {showSectionTitle ? (
+          <div className="section-title" onClick={handleContinue}>
+            <h2>{questions[currentSection].section}</h2>
+            <p className="tap-to-continue">Tap anywhere to continue</p>
+          </div>
+        ) : (
+          renderContent()
+        )}
       </div>
       {!isSubmitted && !showAudioOptions && !showSectionTitle && (
-        <div className="navigation-buttons">
-          <button
-            onClick={prevQuestion}
-            disabled={currentSection === 0 && currentQuestion === 0}
-            className="nav-button prev"
-          >
-            <ChevronLeft size={24} />
-          </button>
-          {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? (
+        <>
+          {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 && (
+            <div className="submit-container">
+              <button
+                onClick={handleSubmitClick}
+                className={`submit-button ${allQuestionsAnswered ? 'ready' : 'disabled'}`}
+              >
+                Submit
+              </button>
+            </div>
+          )}
+          <div className="navigation-buttons">
             <button
-              onClick={submitSurvey}
-              className="submit-button"
-              disabled={!allQuestionsAnswered}
+              onClick={prevQuestion}
+              disabled={currentSection === 0 && currentQuestion === 0}
+              className="nav-button prev"
             >
-              Submit
+              <ChevronLeft size={24} />
             </button>
-          ) : (
             <button
               onClick={nextQuestion}
               className="nav-button next"
+              style={{visibility: currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? 'hidden' : 'visible'}}
             >
               <ChevronRight size={24} />
             </button>
-          )}
-        </div>
+          </div>
+        </>
       )}
     </animated.div>
   );
