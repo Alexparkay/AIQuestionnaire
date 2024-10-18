@@ -347,8 +347,6 @@ const Form = () => {
       }
     };
 
-    // In the submitAudioPreferences function, update the webhookUrl:
-
     const webhookUrl = 'https://ai-podcast-603006204318.europe-west2.run.app/webhook';
 
     fetch(webhookUrl, {
@@ -365,10 +363,12 @@ const Form = () => {
     .then(data => {
       console.log('Success:', data);
       localStorage.removeItem('surveyState');
+      // You might want to add some user feedback here, e.g., a toast notification
     })
     .catch((error) => {
       console.error('Error:', error);
       // You might want to show an error message to the user here
+      // For example, using a toast notification library
     });
   };
 
