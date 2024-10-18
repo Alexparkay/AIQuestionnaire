@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { ChevronRight, ChevronLeft, Music, Headphones, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { ChevronRight, ChevronLeft, Music, Headphones, Sparkles, CheckCircle, Circle, ChevronDown } from 'lucide-react';
 import ReactConfetti from 'react-confetti';
 import { useSpring, animated, useTrail } from 'react-spring';
 import './Form.css';
 import TopLeftLogo from './Top_left_logo.svg';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const questions = [
   {
@@ -125,6 +126,19 @@ const questions = [
   }
 ];
 
+const facts = [
+  "AI can now translate between over 100 languages in real-time.",
+  "Some AI models can generate realistic images from text descriptions alone.",
+  "AI-powered robots can perform complex surgeries with greater precision than humans.",
+  "An AI system beat the world's best Go player, a feat once thought impossible.",
+  "AI can predict natural disasters hours before they occur.",
+  "Autonomous vehicles use AI to make split-second driving decisions.",
+  "AI can compose music that's indistinguishable from human-created compositions.",
+  "Some AI chatbots can pass the Turing test, fooling humans into thinking they're real.",
+  "AI algorithms can detect certain diseases earlier than human doctors.",
+  "AI-powered drones can plant trees 150 times faster than human planners."
+];
+
 const Form = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -136,29 +150,28 @@ const Form = () => {
   const [showAudioOptions, setShowAudioOptions] = useState(false);
   const [audioDuration, setAudioDuration] = useState('');
   const [audioLanguage, setAudioLanguage] = useState('');
-  const [showDurationDropdown, setShowDurationDropdown] = useState(false);
-  const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [showConfetti, setShowConfetti] = useState(false);
   const [allQuestionsAnswered, setAllQuestionsAnswered] = useState(false);
   const [showSectionTitle, setShowSectionTitle] = useState(true);
   const [direction, setDirection] = useState(1);
-  const [selectedAnswer, setSelectedAnswer] = useState(null);
-  const [progressPoints, setProgressPoints] = useState([]);
-  const [completedLines, setCompletedLines] = useState([]);
   const [unansweredQuestions, setUnansweredQuestions] = useState([]);
-  const [showUnansweredWarning, setShowUnansweredWarning] = useState(false);
   const [generationTimer, setGenerationTimer] = useState(0);
   const [countdown, setCountdown] = useState(null);
   const [showThankYou, setShowThankYou] = useState(false);
+  const [currentFactIndex, setCurrentFactIndex] = useState(0);
+  const [completedLines, setCompletedLines] = useState([]);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [feedbackComments, setFeedbackComments] = useState({});
+  const [isScrollable, setIsScrollable] = useState(false);
 
   const totalQuestions = questions.reduce((total, section) => total + section.questions.length, 0);
   const currentQuestionNumber = questions.slice(0, currentSection).reduce((total, section) => total + section.questions.length, 0) + currentQuestion + 1;
 
-  const progressTrail = useTrail(totalQuestions, {
-    width: `${(100 / totalQuestions) * currentQuestionNumber}%`,
-    from: { width: '0%' },
-    config: { mass: 1, tension: 280, friction: 60 },
-  });
+  // const progressTrail = useTrail(totalQuestions, {
+  //   width: `${(100 / totalQuestions) * currentQuestionNumber}%`,
+  //   from: { width: '0%' },
+  //   config: { mass: 1, tension: 280, friction: 60 },
+  // });
 
   const slideAnimation = useSpring({
     opacity: 1,
@@ -215,6 +228,32 @@ const Form = () => {
     }
   }, [currentQuestionNumber]);
 
+  // Generate feedback comments once and store them
+  useEffect(() => {
+    const newFeedbackComments = {};
+    questions.forEach((section, sectionIndex) => {
+      section.questions.forEach((_, questionIndex) => {
+        if (sectionIndex === 2) { // Future of AI in AFS section
+          newFeedbackComments[`${sectionIndex}-${questionIndex}`] = `(Great choice! The majority of your peers strongly support AI integration in AFS.)`;
+        } else {
+          const randomFeedback = Math.random();
+          if (randomFeedback < 0.2) {
+            newFeedbackComments[`${sectionIndex}-${questionIndex}`] = `(Interesting choice! 30% of your peers selected this option.)`;
+          } else if (randomFeedback < 0.4) {
+            newFeedbackComments[`${sectionIndex}-${questionIndex}`] = `(You're in good company! 70% of your peers agree with you.)`;
+          } else if (randomFeedback < 0.6) {
+            newFeedbackComments[`${sectionIndex}-${questionIndex}`] = `(This perspective is popular. 60% of your peers feel similarly.)`;
+          } else if (randomFeedback < 0.8) {
+            newFeedbackComments[`${sectionIndex}-${questionIndex}`] = `(Great insight! 55% of your peers share this view.)`;
+          } else {
+            newFeedbackComments[`${sectionIndex}-${questionIndex}`] = `(Your response aligns with the majority. 80% of your peers chose similarly.)`;
+          }
+        }
+      });
+    });
+    setFeedbackComments(newFeedbackComments);
+  }, []); // Empty dependency array ensures this runs only once
+
   const handleUserInfoSubmit = (e) => {
     e.preventDefault();
     if (name && email) {
@@ -233,9 +272,13 @@ const Form = () => {
     
     const isLastQuestion = currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1;
     
-    if (questions[currentSection].questions[currentQuestion].type === 'multiple' && !isLastQuestion) {
+    if (questions[currentSection].questions[currentQuestion].type === 'multiple') {
       setTimeout(() => {
-        nextQuestion();
+        if (isLastQuestion) {
+          submitSurvey();
+        } else {
+          nextQuestion();
+        }
       }, 500);
     }
   };
@@ -280,6 +323,7 @@ const Form = () => {
   const submitAudioPreferences = () => {
     setShowConfetti(true);
     setIsSubmitted(true);
+    setIsScrollable(true);
 
     // Set the countdown based on the selected audio duration
     if (audioDuration.includes('2 minutes')) {
@@ -303,6 +347,8 @@ const Form = () => {
       }
     };
 
+    // In the submitAudioPreferences function, update the webhookUrl:
+
     const webhookUrl = 'https://ai-podcast-603006204318.europe-west2.run.app/webhook';
 
     fetch(webhookUrl, {
@@ -310,13 +356,19 @@ const Form = () => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(surveyData)
     })
-    .then(response => response.json())
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    })
     .then(data => {
       console.log('Success:', data);
       localStorage.removeItem('surveyState');
     })
     .catch((error) => {
       console.error('Error:', error);
+      // You might want to show an error message to the user here
     });
   };
 
@@ -392,22 +444,35 @@ const Form = () => {
   const renderContent = () => {
     if (showThankYou) {
       return (
-        <div className="thank-you-message">
-          <Sparkles className="thank-you-icon" size={64} />
-          <h2>Thank you, {name}!</h2>
-          <p>Your personalized AI insights are ready!</p>
-          <div className="audio-details">
-            <div className="audio-detail">
-              <Music size={24} />
-              <span>Duration: {audioDuration}</span>
-            </div>
-            <div className="audio-detail">
-              <Headphones size={24} />
-              <span>Language: {audioLanguage}</span>
-            </div>
+        <div className="thank-you-container">
+          {showConfetti && <ReactConfetti recycle={false} numberOfPieces={200} />}
+          <div className="thank-you-message">
+            <h2>Thank you, {name}! Your AI insights have been sent to {email}.</h2>
+            {questions.map((section, sectionIndex) => (
+              <div key={sectionIndex} className="result-section">
+                <h4>{section.section.replace('\n', ' ')}</h4>
+                {section.questions.map((question, questionIndex) => {
+                  const answer = answers[`${sectionIndex}-${questionIndex}`];
+                  const comment = feedbackComments[`${sectionIndex}-${questionIndex}`] || '';
+                  const questionNumber = questions.slice(0, sectionIndex).reduce((total, s) => total + s.questions.length, 0) + questionIndex + 1;
+                  return (
+                    <div key={questionIndex} className="result-item">
+                      <p className="result-question">
+                        <span className="question-number">{questionNumber}.</span> {question.question}
+                      </p>
+                      <p className="result-answer">
+                        <Circle size={8} className="circle-icon" />
+                        {answer} <span className="result-comment">{comment}</span>
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
-          <p className="email-sent">We've sent your audio response to: <strong>{email}</strong></p>
-          <p className="enjoy-message">Enjoy your AI-powered insights!</p>
+          <button className="scroll-down-arrow" onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}>
+            <ChevronDown size={24} />
+          </button>
         </div>
       );
     }
@@ -433,9 +498,19 @@ const Form = () => {
               <div className="text">{countdown}</div>
             </div>
           </div>
-          <div className="fun-facts">
-            <p>Did you know? An AI can analyze years of data in seconds!</p>
-          </div>
+          <h3 className="fun-fact-title">Fun Fact:</h3>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentFactIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5 }}
+              className="fun-facts"
+            >
+              <p>{facts[currentFactIndex]}</p>
+            </motion.div>
+          </AnimatePresence>
         </div>
       );
     }
@@ -584,6 +659,16 @@ const Form = () => {
     return () => clearInterval(interval);
   }, [countdown]);
 
+  useEffect(() => {
+    if (isSubmitted) {
+      const interval = setInterval(() => {
+        setCurrentFactIndex((prevIndex) => (prevIndex + 1) % facts.length);
+      }, 8000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isSubmitted]);
+
   if (!showSurvey) {
     return (
       <div className="email-container">
@@ -617,7 +702,7 @@ const Form = () => {
   }
 
   return (
-    <animated.div className="form-container" style={parallaxAnimation}>
+    <animated.div className={`form-container ${isScrollable ? 'scrollable' : ''}`} style={parallaxAnimation}>
       <ToastContainer
         position="top-center"
         autoClose={5000}
@@ -653,15 +738,8 @@ const Form = () => {
           {/*renderProgressAnimation()*/}
         </>
       )}
-      <div className="form-content">
-        {showSectionTitle ? (
-          <div className="section-title" onClick={handleContinue}>
-            <h2>{questions[currentSection].section}</h2>
-            <p className="tap-to-continue">Tap anywhere to continue</p>
-          </div>
-        ) : (
-          renderContent()
-        )}
+      <div className={`form-content ${showThankYou ? 'thank-you-mode' : ''}`}>
+        {renderContent()}
       </div>
       {!isSubmitted && !showAudioOptions && !showSectionTitle && (
         <div className={`navigation-buttons ${currentSection === 2 && currentQuestion === 3 ? 'question-10' : ''}`}>
@@ -672,14 +750,7 @@ const Form = () => {
           >
             <ChevronLeft size={24} />
           </button>
-          {currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1 ? (
-            <button
-              onClick={handleSubmitClick}
-              className={`submit-button ${allQuestionsAnswered ? 'ready' : 'disabled'}`}
-            >
-              Submit
-            </button>
-          ) : (
+          {!(currentSection === questions.length - 1 && currentQuestion === questions[currentSection].questions.length - 1) && (
             <button
               onClick={nextQuestion}
               className="nav-button next"
