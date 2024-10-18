@@ -332,7 +332,7 @@ const Form = () => {
       setCountdown(15); // 15 seconds for 30-second audio
     }
 
-    const surveyData = {
+    const payload = {
       name,
       email,
       responses: questions.flatMap((section, sectionIndex) =>
@@ -352,7 +352,7 @@ const Form = () => {
     fetch(webhookUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(surveyData)
+      body: JSON.stringify(payload)
     })
     .then(response => {
       if (!response.ok) {
@@ -363,12 +363,11 @@ const Form = () => {
     .then(data => {
       console.log('Success:', data);
       localStorage.removeItem('surveyState');
-      // You might want to add some user feedback here, e.g., a toast notification
+      toast.success("Your responses have been submitted successfully! Check your email for the AI-generated response.");
     })
     .catch((error) => {
       console.error('Error:', error);
-      // You might want to show an error message to the user here
-      // For example, using a toast notification library
+      toast.error("There was an error submitting your responses. Please try again.");
     });
   };
 
