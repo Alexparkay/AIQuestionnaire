@@ -327,9 +327,9 @@ const Form = () => {
 
     // Set the countdown based on the selected audio duration
     if (audioDuration.includes('2 minutes')) {
-      setCountdown(60); // 60 seconds for 2-minute audio
+      setCountdown(60);
     } else if (audioDuration.includes('30 seconds')) {
-      setCountdown(15); // 15 seconds for 30-second audio
+      setCountdown(15);
     }
 
     const payload = {
@@ -342,26 +342,39 @@ const Form = () => {
         }))
       ),
       audioPreferences: {
-        duration: audioDuration.split(' - ')[0], // Extract just the duration part
+        duration: audioDuration.split(' - ')[0],
         language: audioLanguage
       }
     };
 
+    // Original webhook
     const webhookUrl = 'https://ai-podcast-603006204318.europe-west2.run.app/webhook';
+    // New webhook
+    const makeWebhookUrl = 'https://hook.eu2.make.com/cn77bgo92n6g9mf73d0unj07q7peksct';
 
-    fetch(webhookUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    // Send to both webhooks simultaneously using Promise.all
+    Promise.all([
+      fetch(webhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      }),
+      fetch(makeWebhookUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+    ])
+    .then(([response1, response2]) => {
+      // Check if both responses are ok
+      if (!response1.ok || !response2.ok) {
+        throw new Error('One or more webhooks failed');
       }
-      return response.json();
+      return Promise.all([response1.json(), response2.json()]);
     })
-    .then(data => {
-      console.log('Success:', data);
+    .then(([data1, data2]) => {
+      console.log('Success - Webhook 1:', data1);
+      console.log('Success - Webhook 2:', data2);
       localStorage.removeItem('surveyState');
       toast.success("Your responses have been submitted successfully! Check your email for the AI-generated response.");
     })
