@@ -325,14 +325,14 @@ const Form = () => {
     setIsSubmitted(true);
     setIsScrollable(true);
 
-    // Set the countdown based on the selected audio duration
     if (audioDuration.includes('2 minutes')) {
       setCountdown(60);
     } else if (audioDuration.includes('30 seconds')) {
       setCountdown(15);
     }
 
-    const payload = {
+    // Original payload for the AI podcast webhook
+    const originalPayload = {
       name,
       email,
       responses: questions.flatMap((section, sectionIndex) =>
@@ -347,26 +347,57 @@ const Form = () => {
       }
     };
 
+    // New binary format payload for Make.com webhook
+    const binaryPayload = questions.flatMap((section, sectionIndex) =>
+      section.questions.map((question, questionIndex) => {
+        const questionKey = `${sectionIndex}-${questionIndex}`;
+        const selectedAnswer = answers[questionKey];
+        
+        // Create an array of 4 zeros
+        const binaryArray = [0, 0, 0, 0];
+        
+        if (selectedAnswer) {
+          // Find the index of the selected answer and set that position to 1
+          const selectedIndex = question.options.findIndex(option => option === selectedAnswer);
+          if (selectedIndex !== -1) {
+            binaryArray[selectedIndex] = 1;
+          }
+        }
+        
+        return binaryArray;
+      })
+    );
+
     // Original webhook
     const webhookUrl = 'https://ai-podcast-603006204318.europe-west2.run.app/webhook';
-    // New webhook
+    // Make.com webhook
     const makeWebhookUrl = 'https://hook.eu2.make.com/cn77bgo92n6g9mf73d0unj07q7peksct';
 
-    // Send to both webhooks simultaneously using Promise.all
+    // Send to both webhooks with different payloads
     Promise.all([
       fetch(webhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(originalPayload)
       }),
       fetch(makeWebhookUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify({
+          q1: binaryPayload[0],
+          q2: binaryPayload[1],
+          q3: binaryPayload[2],
+          q4: binaryPayload[3],
+          q5: binaryPayload[4],
+          q6: binaryPayload[5],
+          q7: binaryPayload[6],
+          q8: binaryPayload[7],
+          q9: binaryPayload[8],
+          q10: binaryPayload[9]
+        })
       })
     ])
     .then(([response1, response2]) => {
-      // Check if both responses are ok
       if (!response1.ok || !response2.ok) {
         throw new Error('One or more webhooks failed');
       }
